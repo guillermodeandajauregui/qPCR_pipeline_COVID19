@@ -18,10 +18,11 @@ library(tidyverse)
 #define analysis functions here
 ################################################################################
 
-tidy_deltaRN <- function(analysis_text){
-  #takes an "analysis_result.txt" from an eds 
+tidy_deltaRN <- function(eds){
+  #takes an eds file  
   #returns a tidy table with each experiment as column and each cycle as a row
-  
+  eds.file <- unz(description = eds, filename = "apldbio/sds/analysis_result.txt")
+  analysis_text <- read_lines(eds.file)
   #find the lines with the Delta Rn
   delta_rn.id <- which(str_detect(string = analysis_text, pattern = "Delta Rn"))
   

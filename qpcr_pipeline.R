@@ -17,8 +17,9 @@ source("src/functions.R")
 
 ###TO DO: Add a step where analysis_result is extracted from .eds file
 
-resultados <- read_lines(file = "data/analysis_result_ejemplo.txt")
+#resultados <- read_lines(file = "data/analysis_result_ejemplo.txt")
 
+resultados <- "data/DEMO_COVID2020_THERMO.eds"
 ################################################################################
 #analysis steps
 ################################################################################
