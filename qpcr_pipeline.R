@@ -30,6 +30,10 @@ my_deltaRN <- tidy_deltaRN(resultados)
 pivot_deltaRN(my_deltaRN) %>% 
   plot_deltaRN.long()
 
+ggsave(filename = "results/testCurves.pdf", 
+       units = "mm", 
+       width = 210, 
+       height = 148)
   
 ### TO DO: WHY IS THE Y LABEL DIFFERENT TO THE ONE IN JP's PICTURE? 
 ### SEEMS LIKE THE VALUES FROM THE FILE ARE MULTIPLIED TIMES 1000?
@@ -108,47 +112,28 @@ lapply(X = my_wells, FUN = function(my_well){
   }) %>% bind_rows() #we make them a row
 }) %>% bind_rows(.id = "well") #and join them in a data frame
 
-#####5 some clean #########################################
+#####reannotate results  #######################################################
 
+##### we will have an id table for the samples; let's mock one up
 
+annotationFile <-
+my_deltaRN.long %>% 
+  select(well) %>%
+  unique() %>%
+  mutate(well = as.numeric(well)) %>% 
+  mutate(well.id = paste0(LETTERS[(well%/%12 + 1)], (well%%12 + 1))) %>% 
+  mutate(well = as.character(well)) %>% 
+  mutate(id.external = paste0("sample_", letters[1:12]),
+         id.internal = paste0("inmegen_", 
+                              str_pad(1:12, 
+                                      2, 
+                                      side = "left", 
+                                      pad = 0)
+                              )
+         )
 
-################################################################################
-#dragons
-################################################################################
-
-#####5 Evaluate curves (NOT READY YET) #########################################
-
-my_results.prep <- 
- 
-#lapply(X = my_samples, FUN = function(i){ #check with analytics for proper unique id
-  lapply(X = my_well_label, FUN = function(i){
-    
-  temp.df <- 
-  my_deltaRN.long %>% 
-  #  filter(sample.label == i)
-     filter(well_sample.label == i)
-  
-  #for each probe, check for amplification
-  
-  
-  lapply(X = my_probes, FUN = function(j){
-    
-    temp.value <- 
-    temp.df %>% 
-      filter(probe == j) %>% 
-      pull(value) %>% 
-      max
-    
-    ##here we make a mock test, whether max curve value > threshold
-    ##check what is the actual test that is done visually by analysts
-    ##One thing that was discussed, they may want to have an "undetermined" 
-    ##to trigger a reanalysis
-    
-    temp.value > my_threshold
-    }) %>% 
-    bind_rows()
-  
-}) %>% bind_rows(.id = "well_sample.label")
+my_results <- 
+  left_join(annotationFile, my_results)
 
 ##### Finally, we evaluate the conditions based on the rules set in the PNO
 
@@ -156,12 +141,13 @@ my_results.prep <-
 #### change this logic tests for the actual PNO conditions
 
 my_results <- 
-  my_results.prep %>% 
+  my_results %>% 
   mutate(diagnosis = ifelse(S, "positive", "negative"))  
+
 
 ################################################################################
 #write out 
 ################################################################################
 
 out_path = "results/prueba.txt"
-write.table(my_results, out_path)
+write_delim(my_results, out_path)
