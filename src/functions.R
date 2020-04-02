@@ -103,3 +103,45 @@ plot_deltaRN.long <- function(tdrn_long,
     ylab(y_title) +
     theme_minimal()
 }
+
+##### extract_curve
+
+extract_curve <- function(tdrn_long, ...){
+  #takes a tdrn_long, and some filters
+  #checks that filters pull only single curve 
+  #returns a single curve 
+  curve <-
+    tdrn_long %>% 
+    filter(...)
+  
+  my_cycles <- 
+  curve %>% 
+    pull(cycles) 
+  
+  unique_cycles <-
+    unique(my_cycles)
+  
+  if(length(my_cycles) != length(unique_cycles)){
+    stop("filters do not identify a unique curve")
+  }
+  
+  return(curve)
+}
+
+
+
+##### get_threshold.rg
+
+get_threshold.rg <- function(curve){
+  #takes a curve, 
+  #calculates its threshold value
+  #based on 
+  #https://www.researchgate.net/post/How_can_I_set_the_threshold_in_a_Real-Time_PCR_result
+  #which says: 
+  #I know that the SDS (for PerkinElmer/Applied Biosystems) 
+  #calculates the mean and standard deviation (SD) of the signal in the cycles 
+  #3-10 and places the threshold at mean+10*SD 
+  #(often not quite sensible, though!).
+  
+  
+}
