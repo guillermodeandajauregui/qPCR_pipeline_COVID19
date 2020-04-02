@@ -115,6 +115,10 @@ extract_curve <- function(tdrn_long, ...){
     filter(...) %>% 
     arrange(cycles)
   
+  if(nrow(curve)<1){
+    stop("filters did not select a curve")
+  }
+  
   my_cycles <- 
   curve %>% 
     pull(cycles) 
@@ -123,7 +127,7 @@ extract_curve <- function(tdrn_long, ...){
     unique(my_cycles)
   
   if(length(my_cycles) != length(unique_cycles)){
-    stop("filters do not identify a unique curve")
+    stop("filters did not identify a unique curve")
   }
   
   return(curve)
@@ -160,6 +164,3 @@ get_threshold.rg <- function(curve){
   return(my_threshold)
 
 }
-
-test_curve_neg %>% get_threshold.rg()
-test_curve_pos %>% get_threshold.rg()
