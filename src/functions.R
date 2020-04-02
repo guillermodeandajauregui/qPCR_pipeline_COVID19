@@ -141,12 +141,9 @@ get_threshold.rg <- function(curve){
   #takes a curve, 
   #calculates its threshold value
   #based on 
-  #https://www.researchgate.net/post/How_can_I_set_the_threshold_in_a_Real-Time_PCR_result
-  #which says: 
-  #I know that the SDS (for PerkinElmer/Applied Biosystems) 
+  #Quant Studio 6 and 7 user manual
   #calculates the mean and standard deviation (SD) of the signal in the cycles 
   #3-10 and places the threshold at mean+10*SD 
-  #(often not quite sensible, though!).
   
   mean.ini <- 
   curve %>% 
