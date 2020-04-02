@@ -112,7 +112,8 @@ extract_curve <- function(tdrn_long, ...){
   #returns a single curve 
   curve <-
     tdrn_long %>% 
-    filter(...)
+    filter(...) %>% 
+    arrange(cycles)
   
   my_cycles <- 
   curve %>% 
@@ -143,5 +144,22 @@ get_threshold.rg <- function(curve){
   #3-10 and places the threshold at mean+10*SD 
   #(often not quite sensible, though!).
   
+  mean.ini <- 
+  curve %>% 
+    filter(cycles%in%3:10) %>% 
+    pull(value) %>% 
+    mean
   
+  sd.ini <- 
+    curve %>% 
+    filter(cycles%in%3:10) %>% 
+    pull(value) %>% 
+    sd
+  
+  my_threshold <- mean.ini + (10 * sd.ini)
+  return(my_threshold)
+
 }
+
+test_curve_neg %>% get_threshold.rg()
+test_curve_pos %>% get_threshold.rg()
