@@ -28,7 +28,7 @@ my_deltaRN <- tidy_deltaRN(resultados)
 ##########Plot them for that nice visual inspection feel #######################
 
 pivot_deltaRN(my_deltaRN) %>% 
-  plot_deltaRN.long(y_title = "probando")
+  plot_deltaRN.long()
 
   
 ### TO DO: WHY IS THE Y LABEL DIFFERENT TO THE ONE IN JP's PICTURE? 
@@ -57,9 +57,7 @@ my_threshold <- 10
 
 my_deltaRN.long <- 
 my_deltaRN %>% 
-  pivot_longer(cols = -cycles, 
-               names_to = "sample.id", 
-               values_to = "value") %>% 
+  pivot_deltaRN %>% 
   separate(col = sample.id, sep = "_", into = c("well", 
                                                 "sample.label", 
                                                 "probe"), 
@@ -68,22 +66,55 @@ my_deltaRN %>%
 
 #### this part to extract the unique values, to use them for iterations
 
-my_probes <- unique(my_deltaRN.long$probe)
-names(my_probes) <- my_probes
+my_wells <- unique(my_deltaRN.long$well)
+names(my_wells) <- my_wells
 
-my_samples <- unique(my_deltaRN.long$sample.label)
-names(my_samples) <- my_samples
+all_probes <- unique(my_deltaRN.long$probe)
+names(all_probes) <- all_probes
 
-###QUESTION: ARE SAMPLE.LABELS UNIQUE? 
-#OR IS A SAMPLE ADDED TO MORE THAN ONE WELL?
-#FOR NOW: Make them unique adding well_sample.label
+#####5 Evaluate curves (NOT READY YET) #########################################
 
-my_deltaRN.long <- 
-  my_deltaRN.long %>% 
-  mutate(well_sample.label = paste0(well, "_", sample.label))
+### here we iterate over each well
+### returning whether the probe passed the threshold or not in that well
 
-my_well_label <- unique(my_deltaRN.long$well_sample.label)
-names(my_well_label) <- my_well_label
+my_results <- 
+lapply(X = my_wells, FUN = function(my_well){
+  
+  #get only curves for that well
+  well_data <- 
+    my_deltaRN.long %>% 
+    filter(well == my_well)
+  
+  
+  #we evaluate all probes
+  lapply(X = all_probes, FUN = function(my_probe){
+    
+    #we use a trycatch to get NAs for probes not measured in well
+    tryCatch(
+      {
+        #extract curve
+        the_curve     <- extract_curve(well_data, probe == my_probe)
+        #extract threshold
+        the_threshold <- get_threshold.rg(the_curve)
+        print(the_threshold)
+        #does the curve crosses the threshold?
+        any(the_curve$value > the_threshold)
+      },
+      error =function(cond){
+        message("well does not have that probe")
+        return(NA)
+      }
+    )
+  }) %>% bind_rows() #we make them a row
+}) %>% bind_rows(.id = "well") #and join them in a data frame
+
+#####5 some clean #########################################
+
+
+
+################################################################################
+#dragons
+################################################################################
 
 #####5 Evaluate curves (NOT READY YET) #########################################
 
