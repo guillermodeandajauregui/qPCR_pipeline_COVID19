@@ -15,11 +15,8 @@ source("src/functions.R")
 #read data
 ################################################################################
 
-###TO DO: Add a step where analysis_result is extracted from .eds file
-
-#resultados <- read_lines(file = "data/analysis_result_ejemplo.txt")
-
 resultados <- "data/DEMO_COVID2020_THERMO.eds"
+
 ################################################################################
 #analysis steps
 ################################################################################
@@ -30,20 +27,10 @@ my_deltaRN <- tidy_deltaRN(resultados)
 
 ##########Plot them for that nice visual inspection feel #######################
 
-my_deltaRN %>% 
-  pivot_longer(cols = -cycles, 
-               names_to = "sample.id", 
-               values_to = "value") %>% 
-  ggplot(mapping = aes(x = cycles, 
-                       y = value, 
-                       colour = as.factor(sample.id)
-                       )
-         ) + 
-           geom_line() +
-           guides(color = guide_legend(title = "muestra")) +
-           ylab("Delta_RN") +
-           theme_minimal()
+pivot_deltaRN(my_deltaRN) %>% 
+  plot_deltaRN.long(y_title = "probando")
 
+  
 ### TO DO: WHY IS THE Y LABEL DIFFERENT TO THE ONE IN JP's PICTURE? 
 ### SEEMS LIKE THE VALUES FROM THE FILE ARE MULTIPLIED TIMES 1000?
 ### CHECK EDS SPECIFICATIONS

@@ -18,9 +18,11 @@ library(tidyverse)
 #define analysis functions here
 ################################################################################
 
+##### tidy_deltaRN
 tidy_deltaRN <- function(eds){
   #takes an eds file  
   #returns a tidy table with each experiment as column and each cycle as a row
+  #a tdrn 
   eds.file <- unz(description = eds, filename = "apldbio/sds/analysis_result.txt")
   analysis_text <- read_lines(eds.file)
   #find the lines with the Delta Rn
@@ -66,4 +68,38 @@ tidy_deltaRN <- function(eds){
     mutate(cycles = 1:nrow(df_deltaRN))
   
   return(df_deltaRN)
+}
+
+
+##### pivot_deltaRN
+
+pivot_deltaRN <- function(tdrn){
+  #takes a tidy delta RN data frame 
+  #pivots it longer -> long_tdrn
+  #(syntactic sugar)
+  tdrn %>% 
+    pivot_longer(cols = -cycles, 
+                 names_to = "sample.id", 
+                 values_to = "value")
+  
+}
+
+##### plot_deltaRN.long 
+
+plot_deltaRN.long <- function(tdrn_long, 
+                              guide_title = "muestra", 
+                              y_title = "Delta_RN"){
+  #takes a long_tdrn
+  #plots all curves in it, grouped by sample.id
+  #(syntactic sugar)
+  tdrn_long %>% 
+    ggplot(mapping = aes(x = cycles, 
+                         y = value, 
+                         colour = as.factor(sample.id)
+    )
+    ) + 
+    geom_line() +
+    guides(color = guide_legend(title = guide_title)) +
+    ylab(y_title) +
+    theme_minimal()
 }
