@@ -1,0 +1,13 @@
+well well.id id.external id.internal ORF1ab RNAsaP S N diagnosis
+0 A1 sample_a inmegen_01 FALSE FALSE NA NA NA
+1 A2 sample_b inmegen_02 NA FALSE FALSE NA negative
+2 A3 sample_c inmegen_03 NA FALSE NA FALSE NA
+12 B1 sample_d inmegen_04 FALSE FALSE NA NA NA
+13 B2 sample_e inmegen_05 NA FALSE FALSE NA negative
+14 B3 sample_f inmegen_06 NA FALSE NA FALSE NA
+24 C1 sample_g inmegen_07 TRUE FALSE NA NA NA
+25 C2 sample_h inmegen_08 NA FALSE TRUE NA positive
+26 C3 sample_i inmegen_09 NA FALSE NA TRUE NA
+36 D1 sample_j inmegen_10 TRUE FALSE NA NA NA
+37 D2 sample_k inmegen_11 NA FALSE TRUE NA positive
+38 D3 sample_l inmegen_12 NA TRUE NA TRUE NA
