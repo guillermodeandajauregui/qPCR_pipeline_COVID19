@@ -101,6 +101,12 @@ lapply(X = my_wells, FUN = function(my_well){
         #extract threshold
         the_threshold <- get_threshold.rg(the_curve)
         print(the_threshold)
+        #make a plot to show 
+        p <- 
+        plot_deltaRN.long(the_curve) +
+          geom_hline(yintercept = the_threshold) 
+        plot(p)
+          
         #does the curve crosses the threshold?
         any(the_curve$value > the_threshold)
       },
@@ -111,6 +117,48 @@ lapply(X = my_wells, FUN = function(my_well){
     )
   }) %>% bind_rows() #we make them a row
 }) %>% bind_rows(.id = "well") #and join them in a data frame
+
+
+##### plotting section
+
+
+the_plots <- 
+lapply(X = my_wells, FUN = function(my_well){
+  
+  #get only curves for that well
+  well_data <- 
+    my_deltaRN.long %>% 
+    filter(well == my_well)
+  
+  
+  #we evaluate all probes
+  lapply(X = all_probes, FUN = function(my_probe){
+    
+    #we use a trycatch to get NAs for probes not measured in well
+    tryCatch(
+      {
+        #extract curve
+        the_curve     <- extract_curve(well_data, probe == my_probe)
+        #extract threshold
+        the_threshold <- get_threshold.rg(the_curve)
+        print(the_threshold)
+        #make a plot to show 
+        p <- 
+          plot_deltaRN.long(the_curve) +
+          geom_hline(yintercept = the_threshold) 
+        
+      },
+      error =function(cond){
+        message("well does not have that probe")
+        return(NA)
+      }
+    )
+  }) 
+  
+})
+
+
+
 
 #####reannotate results  #######################################################
 
@@ -144,6 +192,31 @@ my_results <-
   my_results %>% 
   mutate(diagnosis = ifelse(S, "positive", "negative"))  
 
+
+################################################################################
+#write out - reports
+################################################################################
+
+#we rename the the_plots object so that we can iterate over it easily 
+
+
+names(the_plots) <- paste0("well_", names(the_plots))
+library("rmarkdown")
+
+lapply(seq_along(the_plots), FUN = function(i){
+  
+  the_well_is <- str_split(names(the_plots)[i], pattern = "_", simplify = T)[2] %>% 
+    as.numeric()
+  
+  my_r <- 
+  my_results %>% 
+    filter(well == the_well_is) 
+
+    my_name <- names(the_plots)[i]
+    mea_plote <- the_plots[[i]]
+    outpath <- paste0("results/reports/", Sys.Date(), "_", my_name, ".pdf")
+    render("template.Rmd",output_file = outpath)    
+})
 
 ################################################################################
 #write out 
