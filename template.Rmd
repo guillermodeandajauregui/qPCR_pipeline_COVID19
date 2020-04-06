@@ -1,0 +1,64 @@
+---
+title: "Reporte de qPCR - COVID19"
+author: "Grupo de Genómica Computacional, INMEGEN"
+date: "`r Sys.time()`"
+output: pdf_document
+---
+
+### info
+
+Patient: well `r my_r$well`.
+Diagnosis: `r my_r$diagnosis`
+
+### qPCR amplifaction plots
+
+
+### Probe RNAsaP
+
+```{r, echo = F, warning=F}
+
+if(is.na(mea_plote[["RP"]])){
+  print("there is no plot")
+}else{
+  #print("there is a plot to print")
+  p <- mea_plote[["RP"]] + 
+    theme(legend.position = "none") +
+    ggtitle("probe RP")
+  plot(p)
+}
+
+```
+
+### Probe N1
+
+```{r, echo = F, warning=F}
+
+if(is.na(mea_plote[["N1"]])){
+  print("there is no plot")
+}else{
+  #print("there is a plot to print")
+  p <- mea_plote[["N1"]] + 
+    theme(legend.position = "none") +
+    ggtitle("probe N1")
+  plot(p)
+}
+
+
+```
+
+### Probe N2
+
+```{r, echo = F, warning=F}
+
+if(is.na(mea_plote[["N2"]])){
+  print("there is no plot")
+}else{
+  #print("there is a plot to print")
+  p <- mea_plote[["N2"]] + 
+    theme(legend.position = "none") +
+    ggtitle("probe N2")
+  plot(p)
+}
+
+
+```
