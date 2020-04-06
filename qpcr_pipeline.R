@@ -15,7 +15,7 @@ source("src/functions.R")
 #read data
 ################################################################################
 
-resultados <- "data/DEMO_COVID2020_THERMO.eds"
+resultados <- "data/Procolo_COVID-19_Prueba1_4Abr20.eds"
 
 ################################################################################
 #analysis steps
@@ -30,7 +30,7 @@ my_deltaRN <- tidy_deltaRN(resultados)
 pivot_deltaRN(my_deltaRN) %>% 
   plot_deltaRN.long()
 
-ggsave(filename = "results/testCurves.pdf", 
+ggsave(filename = "results/testCurves_20200404.pdf", 
        units = "mm", 
        width = 210, 
        height = 148)
@@ -67,6 +67,9 @@ my_deltaRN %>%
                                                 "probe"), 
            remove = F)
 
+my_deltaRN.long %>% 
+  group_by(sample.label) %>% 
+  filter(sample.label == "Control COVID 1", probe == "N1")
 
 #### this part to extract the unique values, to use them for iterations
 
@@ -76,28 +79,54 @@ names(my_wells) <- my_wells
 all_probes <- unique(my_deltaRN.long$probe)
 names(all_probes) <- all_probes
 
+
+
+#we are evaluating same sample label in many wells 
+#so we have to filter that as well
+#check with analytics if this will be the expected behavior 
+
+my_deltaRN.long <- 
+my_deltaRN.long %>% 
+  mutate(sample.label = paste0("well_", well, " ", sample.label))
+
+my_samples <- unique(my_deltaRN.long$sample.label)
+names(my_samples) <- my_samples
+
+
+#will keep only the first well for each probe in Controls 
+my_deltaRN.long.fk <- 
+my_deltaRN.long %>%
+  group_by(sample.label, probe) %>% 
+  filter(well == min(as.numeric(well))) %>% 
+  arrange(well, cycles)
+
 #####5 Evaluate curves (NOT READY YET) #########################################
 
 ### here we iterate over each well
 ### returning whether the probe passed the threshold or not in that well
 
+
 my_results <- 
-lapply(X = my_wells, FUN = function(my_well){
-  
+#lapply(X = my_wells, FUN = function(my_well){
+  lapply(X = my_samples, FUN = function(my_sample){  
   #get only curves for that well
-  well_data <- 
-    my_deltaRN.long %>% 
-    filter(well == my_well)
+  #well_data <-
   
+  sample_data <-
+    my_deltaRN.long.fk %>% 
+    filter(sample.label == my_sample) #%>% 
+    #filter(well == min(as.numeric(well)))
   
+
   #we evaluate all probes
+  
   lapply(X = all_probes, FUN = function(my_probe){
     
     #we use a trycatch to get NAs for probes not measured in well
     tryCatch(
       {
         #extract curve
-        the_curve     <- extract_curve(well_data, probe == my_probe)
+        the_curve     <- extract_curve(sample_data, probe == my_probe)
         #extract threshold
         the_threshold <- get_threshold.rg(the_curve)
         print(the_threshold)
@@ -108,7 +137,7 @@ lapply(X = my_wells, FUN = function(my_well){
         plot(p)
           
         #does the curve crosses the threshold?
-        any(the_curve$value > the_threshold)
+        any(the_curve$value[1:40] > the_threshold)
       },
       error =function(cond){
         message("well does not have that probe")
@@ -123,13 +152,12 @@ lapply(X = my_wells, FUN = function(my_well){
 
 
 the_plots <- 
-lapply(X = my_wells, FUN = function(my_well){
+lapply(X = my_samples, FUN = function(my_sample){
   
   #get only curves for that well
-  well_data <- 
-    my_deltaRN.long %>% 
-    filter(well == my_well)
-  
+  sample_data <-
+    my_deltaRN.long.fk %>% 
+    filter(sample.label == my_sample)  
   
   #we evaluate all probes
   lapply(X = all_probes, FUN = function(my_probe){
@@ -138,7 +166,7 @@ lapply(X = my_wells, FUN = function(my_well){
     tryCatch(
       {
         #extract curve
-        the_curve     <- extract_curve(well_data, probe == my_probe)
+        the_curve     <- extract_curve(sample_data, probe == my_probe)
         #extract threshold
         the_threshold <- get_threshold.rg(the_curve)
         print(the_threshold)
@@ -187,10 +215,15 @@ my_results <-
 
 #### THIS IS A MOCKUP, WHERE HAVING S == TRUE means POSITIVE for COVID
 #### change this logic tests for the actual PNO conditions
-
-my_results <- 
-  my_results %>% 
-  mutate(diagnosis = ifelse(S, "positive", "negative"))  
+my_results <-
+my_results %>% 
+  purrr::map_df(.f = function(i){
+    tidyr::replace_na(i, replace = "undetermined")}
+    ) %>% 
+    mutate(diagnosis = ifelse(N1=="TRUE", "positive", 
+                            ifelse(N2=="TRUE", "positive", "negative")
+                            )
+         )  
 
 
 ################################################################################
@@ -200,17 +233,19 @@ my_results <-
 #we rename the the_plots object so that we can iterate over it easily 
 
 
-names(the_plots) <- paste0("well_", names(the_plots))
+#names(the_plots) <- paste0("well_", names(the_plots))
 library("rmarkdown")
 
 lapply(seq_along(the_plots), FUN = function(i){
   
-  the_well_is <- str_split(names(the_plots)[i], pattern = "_", simplify = T)[2] %>% 
-    as.numeric()
+  #the_well_is <- str_split(names(the_plots)[i], pattern = "_", simplify = T)[2] %>% 
+  #  as.numeric()
+  
+  the_sample_is <- names(the_plots)[i]
   
   my_r <- 
   my_results %>% 
-    filter(well == the_well_is) 
+    filter(well == the_sample_is) 
 
     my_name <- names(the_plots)[i]
     mea_plote <- the_plots[[i]]
