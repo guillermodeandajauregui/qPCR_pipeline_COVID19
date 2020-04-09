@@ -1,11 +1,14 @@
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$babel-lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{article}
 \usepackage[$geometry$]{geometry}
-\newcommand*{\authorfont}{\fontfamily{phv}\selectfont}
+\newcommand*{\authorfont}{\fontfamily{cmss}\selectfont}
 $if(fontfamily)$
 \usepackage[$fontfamilyoptions$]{$fontfamily$}
 $else$
-\usepackage{lmodern}
+\usepackage[T1]{fontenc}
 $endif$
+
+\usepackage[table]{xcolor}
+
 \usepackage{abstract}
 \renewcommand{\abstractname}{}    % clear the title
 \renewcommand{\absnamepos}{empty} % originally center
@@ -170,23 +173,26 @@ $if(graphics)$$if(logo)$\Oldincludegraphics[width=$if(width)$$width$$else$0.3$en
 
 $if(report)$
 \begin{center} 
-\Large \bfseries{\scshape{qPCR COVID-19}}\\
-\normalsize \bfseries{\scshape{Report}}
+{\fontfamily{cmss}\selectfont
+\huge \bfseries{\scshape{SARS-CoV-2}}\\
+\normalsize \bfseries{\scshape{qPCR Report}}
+}
 \end{center}
 $endif$
 
 \vspace{2mm}
 
+{\fontfamily{cmss}\selectfont
 	\noindent \begin{tabular*}{\textwidth}{ @{\extracolsep{\fill}} lr @{\extracolsep{\fill}}}
 
 
 Patienrt: $if(patient)$\texttt{$patient$}$else$TBD$endif$ & Date of report: $if(date)$\texttt{$date$}$else$TBD$endif$\\
  Sample ID: $if(id)$\texttt{$id$}$else$TBD$endif$  &  Institution of origin: $if(institution)$\texttt{$institution$}$else$TBD$endif$\\
- Pre-diagnosis: $if(pre-diagnosis)$\texttt{$pre-diagnosis$}$else$TBD$endif$  & Controls: $if(controls)$\texttt{$controls$}$else$TBD$endif$\\
+ Pre-diagnosis: $if(pre-diagnosis)$\texttt{$pre-diagnosis$}$else$TBD$endif$  & Plate controls: $if(controls)$\texttt{PASS}$else$\cellcolor{red!50}\texttt{FAIL}$endif$\\
 	&  \\
 	\hline
 	\end{tabular*}
-	
+}	
 \vspace{2mm}
 	
 
@@ -198,11 +204,11 @@ Patienrt: $if(patient)$\texttt{$patient$}$else$TBD$endif$ & Date of report: $if(
 $body$
 
 
-
+{\fontfamily{cmss}\selectfont
 \noindent \begin{tabular*}{\textwidth}{ @{\extracolsep{\fill}} lr @{\extracolsep{\fill}}}
 \hline
 E-mail: $if(email)$\texttt{$email$}$else$TBD$endif$ & Web: $if(web)$\href{http://$web$}{\tt $web$}$else$TBD$endif$  \end{tabular*}
-
+}
 
 \end{document}
 

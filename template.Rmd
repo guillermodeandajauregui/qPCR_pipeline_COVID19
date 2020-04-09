@@ -5,7 +5,8 @@ output:
     fig_caption: yes
     latex_engine: pdflatex
     template: theme/latexTemplate.tex
-geometry: margin=1in
+geometry: margin=0.7in
+papersize: letterpaper
 
 
 report: true
@@ -17,14 +18,18 @@ patient: "`r my_r$well`"
 id: "id.internal"
 institution: "id.external"
 pre-diagnosis: "`r my_r$diagnosis`"
-controls: "PASS"
+
+# To generate a red flag when the plait 
+# controls fail, the variable "controls"
+# must be passed to "false"
+controls: true
 
 
-email: "dr_gecko@inmegen.gob.mx"
+email: "dr.gecko@inmegen.gob.mx"
 web: "www.inmegen.gob.mx"
 
 
-fontfamily: mathpazo
+fontfamily: fontenc
 fontsize: 11pt
 header-includes:
    - \linespread{1.05}
