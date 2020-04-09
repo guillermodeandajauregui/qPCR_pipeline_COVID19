@@ -83,7 +83,17 @@ pivot_deltaRN <- function(tdrn){
                  values_to = "value")
   
 }
-
+##### split_tidyRN.long
+split_longtdrn <- function(longtdrn){
+  #takes a long_tdrn
+  #splits sample.id int well, sample.label, probe columns
+  #for maximum tidyness
+  longtdrn %>% 
+    separate(col = sample.id, sep = "_", into = c("well", 
+                                                  "sample.label", 
+                                                  "probe"),
+             remove = F)
+}
 ##### plot_deltaRN.long 
 
 plot_deltaRN.long <- function(tdrn_long, 
