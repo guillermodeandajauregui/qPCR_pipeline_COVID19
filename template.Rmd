@@ -1,16 +1,38 @@
 ---
-title: "Reporte de qPCR - COVID19"
+output: 
+  pdf_document:
+    keep_tex: false
+    fig_caption: yes
+    latex_engine: pdflatex
+    template: theme/latexTemplate.tex
+geometry: margin=1in
+
+
+report: true
+title: "`r my_r$well`"
 author: "Grupo de Genómica Computacional, INMEGEN"
 date: "`r Sys.time()`"
-output: pdf_document
+
+patient: "`r my_r$well`"
+id: "id.internal"
+institution: "id.external"
+pre-diagnosis: "`r my_r$diagnosis`"
+controls: "PASS"
+
+
+email: "dr_gecko@inmegen.gob.mx"
+web: "www.inmegen.gob.mx"
+
+
+fontfamily: mathpazo
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+graphics: true
+width: 1
+logoposition: center
+logo: theme/logos.pdf
 ---
-
-### info
-
-Patient: well `r my_r$well`.
-Diagnosis: `r my_r$diagnosis`
-
-### qPCR amplifaction plots
 
 
 ### Probe RNAsaP
