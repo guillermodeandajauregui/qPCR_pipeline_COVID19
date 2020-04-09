@@ -94,6 +94,38 @@ split_longtdrn <- function(longtdrn){
                                                   "probe"),
              remove = F)
 }
+
+##### get_plate
+get_plate <- function(tdrn){
+  #takes a tdrn 
+  #and fills a table with positions
+  
+  midf <- 
+    tdrn %>% 
+    pivot_deltaRN %>% 
+    split_tidyRN.long %>% 
+    filter(cycles==1) #to have just the one
+  
+  #make an empty matrix to represent the plates
+  mx <- matrix(data = "empty", ncol = 8, nrow = 12)
+  rownames(mx) <- 1:12
+  colnames(mx) <- LETTERS[1:8]
+  
+  #loop over used wells to fill the matrix with sample names
+  for(i in unique(midf$well)){
+    filler <- 
+      midf %>% 
+      filter(cycles==1) %>% 
+      filter(well == i) %>% 
+      pull(sample.label) 
+    
+    mx[as.numeric(i)+1] <- filler
+  }
+  
+  #pivot matrix and present as data frame
+  mx <-as.data.frame(t(mx))
+  return(mx)
+}
 ##### plot_deltaRN.long 
 
 plot_deltaRN.long <- function(tdrn_long, 
