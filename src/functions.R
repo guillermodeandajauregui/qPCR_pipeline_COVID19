@@ -203,3 +203,32 @@ get_threshold.rg <- function(curve){
   return(my_threshold)
 
 }
+
+##### analyze_sample
+analyze_sample <- function(tdrn_sample = sample_data, probes = all_probes){
+  #takes a filtered tdrn for a single sample
+  #returns a data frame with the curve values 
+  
+  lapply(X = all_probes, FUN = function(my_probe){
+    #we use a trycatch to get NAs for probes not measured in well
+    tryCatch(
+      {
+        #extract curve
+        the_curve     <- extract_curve(sample_data, probe == my_probe)
+        #extract threshold
+        
+        
+        
+        the_threshold <- get_threshold.rg(the_curve)
+        print(the_threshold)
+        #does the curve crosses the threshold?
+        #threshold for RP should be crossed at time 35
+        any(the_curve$value[1:40] > the_threshold)
+      },
+      error =function(cond){
+        message("well does not have that probe")
+        return(NA)
+      }
+    )
+  }) %>% bind_rows()
+}
