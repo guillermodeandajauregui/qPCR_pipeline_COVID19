@@ -104,7 +104,7 @@ get_plate <- function(tdrn){
   midf <- 
     tdrn %>% 
     pivot_deltaRN %>% 
-    split_tidyRN.long %>% 
+    split_longtdrn %>% 
     filter(cycles==1) #to have just the one
   
   #make an empty matrix to represent the plates
