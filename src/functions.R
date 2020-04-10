@@ -205,22 +205,23 @@ get_threshold.rg <- function(curve){
 }
 
 ##### analyze_sample
-analyze_sample <- function(tdrn_sample = sample_data, probes = all_probes){
+analyze_sample <- function(tdrn_sample, probes = all_probes){
   #takes a filtered tdrn for a single sample
-  #returns a data frame with the curve values 
+  #returns a data frame with Ct for each probe
+  #returns Inf if value never crosses threshold
   
   lapply(X = all_probes, FUN = function(my_probe){
     #we use a trycatch to get NAs for probes not measured in well
     tryCatch(
       {
         #extract curve
-        the_curve     <- extract_curve(sample_data, probe == my_probe)
+        the_curve     <- extract_curve(tdrn_sample, probe == my_probe)
         #extract threshold
         
         
-        
         the_threshold <- get_threshold.rg(the_curve)
-        print(the_threshold)
+        #the_threshold <- 725
+        #print(the_threshold)
         #does the curve crosses the threshold?
         #threshold for RP should be crossed at time 35
         #any(the_curve$value[1:40] > the_threshold)
@@ -236,3 +237,70 @@ analyze_sample <- function(tdrn_sample = sample_data, probes = all_probes){
     )
   }) %>% bind_rows()
 }
+
+##### plate_qc
+plate_qc <- function(tdrn, all_probes = all_probes){
+  #takes an tdrn file 
+  #extracts quality control wells
+  #analyzes quality control 
+  #returns a list with qc table and qc result
+  
+  
+  #extracts quality control wells
+  wells.ntc <- grep(pattern = "NTC", x = colnames(tdrn))
+  wells.ptc <- grep(pattern = "PTC", x = colnames(tdrn))
+  
+  ##and filter the tdrn
+  qc.df <-
+    tdrn %>% 
+    select(c(wells.ntc, wells.ptc), cycles) %>% 
+    pivot_deltaRN %>% 
+    split_tidyRN.long
+  
+  print(qc.df)
+  
+  #name for iteration
+  qc.samples <- unique(qc.df$sample.label)
+  names(qc.samples) <- qc.samples
+  
+  #analyze qc
+  qc.results <- 
+    lapply(qc.samples, FUN = function(my_sample){
+      
+      sample_data <-
+        qc.df %>% 
+        filter(sample.label == my_sample) 
+      
+      print(sample_data)
+      #we evaluate all probes
+      analyze_sample(tdrn_sample = sample_data, probes = all_probes)
+      
+    })%>% bind_rows(.id = "sample")  
+  
+  
+  
+  #evaluate logic
+  
+  #check that all probes for NTC DO NOT cross threshold
+  
+  ntc.all <-
+    qc.results %>%
+    filter(grepl(pattern = "NTC", x = sample)) %>%
+    select(!sample) %>%
+    map_dfr(.f = function(i){all(i==Inf)}) #%>% #all probes dont cross threshold
+    #unlist %>% all(. == T) #this should be all true
+  
+  #check that all probes for PTC DO cross threshold
+  ptc.all <-
+    qc.results %>%
+    filter(grepl(pattern = "PTC", x = sample)) %>%
+    select(!sample)
+    #list(RP = ptc.all[[""]])
+    #unlist %>% all(. == T) #this should be all true
+  
+  #return(qc.results)
+
+}
+
+plate_qc(tdrn = my_deltaRN)
+
