@@ -317,4 +317,97 @@ plate_qc <- function(tdrn, all_probes){
 
 }
 
+##### test.plate
 
+test.plate <- function(tdrn, probes){
+  #takes a tdrn
+  #returns a table with Ct for each probe, for each sample 
+  
+  wells.ntc <- grep(pattern = "NTC", x = colnames(my_deltaRN))
+  wells.ptc <- grep(pattern = "PTC", x = colnames(my_deltaRN))
+  
+  #extract the samples
+  test.df <-
+    my_deltaRN %>% 
+    select(!c(wells.ntc, wells.ptc), cycles) %>% 
+    pivot_deltaRN %>% 
+    separate(col = sample.id, sep = "_", into = c("well", 
+                                                  "sample.label", 
+                                                  "probe"), 
+             remove = F)
+  
+  test.samples <- unique(test.df$sample.label)
+  names(test.samples) <- test.samples
+  
+  #analyze tests
+  test.results <- 
+    lapply(test.samples, FUN = function(my_sample){
+      
+      sample_data <-
+        test.df %>% 
+        filter(sample.label == my_sample) 
+      
+      #we evaluate all probes
+      analyze_sample(tdrn_sample = sample_data, probes = probes)
+      
+    })%>% bind_rows(.id = "sample")
+  
+  return(test.results)
+  
+}
+
+##### plot.curves
+plot.curves <- function(tdrn, probes, qc = TRUE){
+  #takes an tdrn file
+  #makes plots for either qc wells
+  #or non-qc wells
+  
+  #extracts quality control wells
+  wells.ntc <- grep(pattern = "NTC", x = colnames(tdrn))
+  wells.ptc <- grep(pattern = "PTC", x = colnames(tdrn))
+  
+  ##and filter the tdrn
+  if(qc == TRUE){
+    qc.df <-
+      tdrn %>% 
+      select(c(wells.ntc, wells.ptc), cycles) %>% 
+      pivot_deltaRN %>% 
+      split_tidyRN.long
+  }else{
+    qc.df <-
+      tdrn %>% 
+      select(!c(wells.ntc, wells.ptc), cycles) %>% 
+      pivot_deltaRN %>% 
+      split_tidyRN.long
+  }
+  
+  
+  #name for iteration
+  qc.samples <- unique(qc.df$sample.label)
+  names(qc.samples) <- qc.samples
+  
+  #analyze qc
+  qc.results <- 
+    lapply(qc.samples, FUN = function(my_sample){
+      
+      sample_data <-
+        qc.df %>% 
+        filter(sample.label == my_sample) 
+      
+      lapply(X = probes, FUN = function(my_probe){
+        
+        the_curve     <- extract_curve(sample_data, probe == my_probe)
+        #extract threshold
+        
+        
+        the_threshold <- get_threshold.rg(the_curve)
+        
+        p <- 
+          plot_deltaRN.long(tdrn_long = the_curve) + 
+          geom_hline(yintercept = the_threshold, linetype = 2)
+        
+      })
+      
+      
+    })
+}
