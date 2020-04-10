@@ -12,6 +12,7 @@
 ################################################################################
 
 library(tidyverse)
+library("rmarkdown")
 
 
 ################################################################################
@@ -428,4 +429,32 @@ cdc_classification <- function(SampleResults){
                                    )
     )
     )
+}
+
+
+######make_reports
+
+make_reports <- function(plot_list, 
+                         result_table,
+                         outdir, 
+                         qc = F){
+  #makes reports from a list of plots and some result table
+  lapply(seq_along(plot_list), function(i){
+    
+    the_sample_is <- names(plot_list)[i]
+    
+    my_r <- 
+      result_table %>% 
+      filter(sample == the_sample_is)
+    
+    my_name <- names(plot_list)[i]
+    mea_plote <- plot_list[[i]]
+    
+    outpath <- paste0(outdir, "/", Sys.Date(), "_", my_name, ".pdf")
+    if(qc==F){
+      render("template.Rmd",output_file = outpath)
+    }else{
+      render("template_qc.Rmd",output_file = outpath)
+    }
+  })
 }
