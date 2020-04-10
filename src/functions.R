@@ -244,7 +244,7 @@ plate_qc <- function(tdrn, all_probes = all_probes){
   #takes an tdrn file 
   #extracts quality control wells
   #analyzes quality control 
-  #returns a list with qc table and qc result
+  #returns a list with qc table and qc results
   
   
   #extracts quality control wells
@@ -312,6 +312,7 @@ plate_qc <- function(tdrn, all_probes = all_probes){
   
   if(!ntc.all){print("NTC failed")}
   if(!ptc.all){print("PTC failed")}
+  
   return(result_final)
 
 }
