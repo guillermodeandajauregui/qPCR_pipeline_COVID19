@@ -411,3 +411,21 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
       
     })
 }
+
+##### cdc_classification
+cdc_classification <- function(SampleResults){
+  #takes results 
+  #assigns classification
+  SampleResults %>% 
+    mutate(classification = ifelse(test = RP > 35, 
+                                   "invalid",
+                                   ifelse(N1 <= 40 & N2 <= 40, 
+                                          "positive", 
+                                          ifelse(N1 > 40 & N2 > 40,
+                                                 "negative", 
+                                                 "inconclusive"
+                                          )
+                                   )
+    )
+    )
+}
