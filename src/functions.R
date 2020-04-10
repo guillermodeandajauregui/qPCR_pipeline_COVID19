@@ -437,6 +437,7 @@ cdc_classification <- function(SampleResults){
 make_reports <- function(plot_list, 
                          result_table,
                          outdir, 
+                         #qc.result,
                          qc = F){
   #makes reports from a list of plots and some result table
   lapply(seq_along(plot_list), function(i){
