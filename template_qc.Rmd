@@ -1,0 +1,96 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+    fig_caption: yes
+    latex_engine: pdflatex
+    template: theme/latexTemplate.tex
+geometry: margin=0.7in
+papersize: letterpaper
+
+
+report: true
+title: "`r my_r$sample`"
+author: "Grupo de Genómica Computacional, INMEGEN"
+date: "`r Sys.time()`"
+
+patient: "`r my_r$sample`"
+id: "id.internal"
+institution: "id.external"
+
+# To generate a red flag when the plait 
+# controls fail, the variable "controls"
+# must be passed to "false"
+controls: true
+
+
+email: "dr.gecko@inmegen.gob.mx"
+web: "www.inmegen.gob.mx"
+
+
+fontfamily: fontenc
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+graphics: true
+width: 1
+logoposition: center
+logo: theme/logos.pdf
+---
+
+```{r echo=F, results='asis'}
+
+library(knitr)
+kable(my_r)
+```
+
+
+### Probe RNAsaP
+
+```{r, echo = F, warning=F}
+
+if(is.na(mea_plote[["RP"]])){
+  print("there is no plot")
+}else{
+  #print("there is a plot to print")
+  p <- mea_plote[["RP"]] + 
+    theme(legend.position = "none") +
+    ggtitle("probe RP")
+  plot(p)
+}
+
+```
+
+### Probe N1
+
+```{r, echo = F, warning=F}
+
+if(is.na(mea_plote[["N1"]])){
+  print("there is no plot")
+}else{
+  #print("there is a plot to print")
+  p <- mea_plote[["N1"]] + 
+    theme(legend.position = "none") +
+    ggtitle("probe N1")
+  plot(p)
+}
+
+
+```
+
+### Probe N2
+
+```{r, echo = F, warning=F}
+
+if(is.na(mea_plote[["N2"]])){
+  print("there is no plot")
+}else{
+  #print("there is a plot to print")
+  p <- mea_plote[["N2"]] + 
+    theme(legend.position = "none") +
+    ggtitle("probe N2")
+  plot(p)
+}
+
+
+```
