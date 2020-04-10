@@ -84,7 +84,7 @@ pivot_deltaRN <- function(tdrn){
                  values_to = "value")
   
 }
-##### split_tidyRN.long
+##### split_longtdrn
 split_longtdrn <- function(longtdrn){
   #takes a long_tdrn
   #splits sample.id int well, sample.label, probe columns
@@ -257,7 +257,7 @@ plate_qc <- function(tdrn, all_probes){
     tdrn %>% 
     select(c(wells.ntc, wells.ptc), cycles) %>% 
     pivot_deltaRN %>% 
-    split_tidyRN.long
+    split_longtdrn
   
   
   #name for iteration
@@ -373,13 +373,13 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
       tdrn %>% 
       select(c(wells.ntc, wells.ptc), cycles) %>% 
       pivot_deltaRN %>% 
-      split_tidyRN.long
+      split_longtdrn
   }else{
     qc.df <-
       tdrn %>% 
       select(!c(wells.ntc, wells.ptc), cycles) %>% 
       pivot_deltaRN %>% 
-      split_tidyRN.long
+      split_longtdrn
   }
   
   
