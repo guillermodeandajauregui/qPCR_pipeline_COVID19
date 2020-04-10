@@ -229,6 +229,7 @@ analyze_sample <- function(tdrn_sample, probes = all_probes){
         the_curve %>% 
           filter(value >= the_threshold) %>% 
           pull(cycles) %>% min
+        
       },
       error =function(cond){
         message("well does not have that probe")
@@ -257,7 +258,6 @@ plate_qc <- function(tdrn, all_probes = all_probes){
     pivot_deltaRN %>% 
     split_tidyRN.long
   
-  print(qc.df)
   
   #name for iteration
   qc.samples <- unique(qc.df$sample.label)
@@ -271,7 +271,6 @@ plate_qc <- function(tdrn, all_probes = all_probes){
         qc.df %>% 
         filter(sample.label == my_sample) 
       
-      print(sample_data)
       #we evaluate all probes
       analyze_sample(tdrn_sample = sample_data, probes = all_probes)
       
@@ -287,20 +286,34 @@ plate_qc <- function(tdrn, all_probes = all_probes){
     qc.results %>%
     filter(grepl(pattern = "NTC", x = sample)) %>%
     select(!sample) %>%
-    map_dfr(.f = function(i){all(i==Inf)}) #%>% #all probes dont cross threshold
-    #unlist %>% all(. == T) #this should be all true
+    map_dfr(.f = function(i){all(i==Inf)}) %>% #all probes dont cross threshold
+    unlist %>% all(. == T) #this should be all true
   
   #check that all probes for PTC DO cross threshold
   ptc.all <-
     qc.results %>%
     filter(grepl(pattern = "PTC", x = sample)) %>%
     select(!sample)
-    #list(RP = ptc.all[[""]])
-    #unlist %>% all(. == T) #this should be all true
   
-  #return(qc.results)
+  ptc.all <-
+    list(RP = all(ptc.all[["RP"]]<=35), #this should be T
+         N1 = all(ptc.all[["N1"]]<=40), #this should be T
+         N2 = all(ptc.all[["N2"]]<=40)  #this should be T
+         ) %>% 
+    unlist %>% all(. == T) #this should be all true
+  
+  
+  qc.assess <- ifelse(ntc.all & ptc.all, "PASS", "FAIL")
+  
+  result_final <- list(qc.values = qc.results,
+                       ntc.pass = ntc.all,
+                       ptc.pass = ptc.all, 
+                       QC = qc.assess)
+  
+  if(!ntc.all){print("NTC failed")}
+  if(!ptc.all){print("PTC failed")}
+  return(result_final)
 
 }
 
-plate_qc(tdrn = my_deltaRN)
 
