@@ -286,7 +286,8 @@ plate_qc <- function(tdrn, all_probes){
   ntc.all <-
     qc.results %>%
     filter(grepl(pattern = "NTC", x = sample)) %>%
-    select(!sample) %>%
+    #select(!sample) %>%
+    select(-sample) %>%
     map_dfr(.f = function(i){all(i==Inf)}) %>% #all probes dont cross threshold
     unlist %>% all(. == T) #this should be all true
   
@@ -294,7 +295,8 @@ plate_qc <- function(tdrn, all_probes){
   ptc.all <-
     qc.results %>%
     filter(grepl(pattern = "PTC", x = sample)) %>%
-    select(!sample)
+    #select(!sample)
+    select(-sample)
   
   ptc.all <-
     list(RP = all(ptc.all[["RP"]]<=35), #this should be T
