@@ -332,7 +332,8 @@ test.plate <- function(tdrn, probes){
   #extract the samples
   test.df <-
     my_deltaRN %>% 
-    select(!c(wells.ntc, wells.ptc), cycles) %>% 
+    #select(!c(wells.ntc, wells.ptc), cycles) %>%
+    select(-c(wells.ntc, wells.ptc), cycles) %>%
     pivot_deltaRN %>% 
     separate(col = sample.id, sep = "_", into = c("well", 
                                                   "sample.label", 
@@ -379,7 +380,8 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
   }else{
     qc.df <-
       tdrn %>% 
-      select(!c(wells.ntc, wells.ptc), cycles) %>% 
+      #select(!c(wells.ntc, wells.ptc), cycles) %>%
+      select(-c(wells.ntc, wells.ptc), cycles) %>%
       pivot_deltaRN %>% 
       split_longtdrn
   }
