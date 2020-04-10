@@ -205,12 +205,12 @@ get_threshold.rg <- function(curve){
 }
 
 ##### analyze_sample
-analyze_sample <- function(tdrn_sample, probes = all_probes){
+analyze_sample <- function(tdrn_sample, probes){
   #takes a filtered tdrn for a single sample
   #returns a data frame with Ct for each probe
   #returns Inf if value never crosses threshold
   
-  lapply(X = all_probes, FUN = function(my_probe){
+  lapply(X = probes, FUN = function(my_probe){
     #we use a trycatch to get NAs for probes not measured in well
     tryCatch(
       {
@@ -240,7 +240,7 @@ analyze_sample <- function(tdrn_sample, probes = all_probes){
 }
 
 ##### plate_qc
-plate_qc <- function(tdrn, all_probes = all_probes){
+plate_qc <- function(tdrn, all_probes){
   #takes an tdrn file 
   #extracts quality control wells
   #analyzes quality control 
