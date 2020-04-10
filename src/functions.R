@@ -223,7 +223,11 @@ analyze_sample <- function(tdrn_sample = sample_data, probes = all_probes){
         print(the_threshold)
         #does the curve crosses the threshold?
         #threshold for RP should be crossed at time 35
-        any(the_curve$value[1:40] > the_threshold)
+        #any(the_curve$value[1:40] > the_threshold)
+        Ct <- 
+        the_curve %>% 
+          filter(value >= the_threshold) %>% 
+          pull(cycles) %>% min
       },
       error =function(cond){
         message("well does not have that probe")
