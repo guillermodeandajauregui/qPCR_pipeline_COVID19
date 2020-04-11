@@ -13,17 +13,18 @@ library(shinyFiles)
 library(DT)
 
 
-source("function_qpcrPipeline.R")
+source("function_app_qPCR_cdc.R")
+source("function_plate_conf.R")
 
-input <- c("data/Procolo_COVID-19_Prueba1_4Abr20.eds")
-output <- c("results/")
+#input <- c("data/Procolo_COVID-19_Prueba1_4Abr20.eds")
+#output <- c("results/")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   theme = shinytheme("spacelab"),
   
   #titlePanel( div(column(width = 6, tags$img(src = "images/inmegen.jpg"))),
-  #                column(width = 6, h2("Aplicación para análisis de RT-PCR")), 
+  #                column(width = 6, h2("Aplicaci??n para an??lisis de RT-PCR")), 
   #            windowTitle="MyPage"),
   
   titlePanel( div(column(width = 6, h1("Aplicación para análisis de RT-PCR")), 
@@ -53,44 +54,75 @@ ui <- fluidPage(
     hr(),
     
     ######## BUTTON TO GENERATE SUMMARY TABLE
-    actionButton("analizar", "Analizar corrida")
+    h5('Presiona para analizar los datos de la corrida'),
+    actionButton("analizar", "Analizar corrida"),
+    hr(),
+    
+    ######## BUTTON TO PRINT PLOTS TO WEB
+    h5('Presiona para imprimir las curvas en la interfaz web'),
+    actionButton("plot", "Imprimir curvas en Web"),
+    hr(),
+    
+    ######## BUTTON TO GENERATE PLATE CONFIGURATION TABLE
+    h5('Presiona para generar la tabla de configuración de la placa'),
+    actionButton("plate", "Reporte placa")
 
   ),
   
-  ###### DISEÑO DEL PANEL PARA IMPRESION DE RESULTADOS
+  ###### DISE??O DEL PANEL PARA IMPRESION DE RESULTADOS
   mainPanel(
     
-    ###### PROTOCOLO
-    fluidRow(
-      h4("Protocolo seleccionado"),
-      textOutput("protocolo")
-    ),
-    hr(),
-    hr(),
-
-    ###### ARCHIVO A PROCESAR    
-    fluidRow(
-      h4("Archivo a procesar seleccionado"),
-      textOutput("input_file")
-    ),
-    hr(),
-    hr(),
-    
-    ###### DIRECTORIO DE RESULTADOS
-    fluidRow(
-      h4("Directorio de resultados seleccionado"),
-      textOutput("output_dir")
-    ),
-    hr(),
-    hr(),
-      
-    
-    ###### TABLA DE RESULTADOS
-    fluidRow( 
-      h4("Tabla de resultados"),
-      #textOutput("run_ready")
-      dataTableOutput(outputId = 'run_ready')
+    tabsetPanel(
+      id = "navbar",
+      tabPanel(title = "Tabla Resumen",
+               value = "table",
+               
+               ###### PROTOCOLO
+               fluidRow(
+                 h4("Protocolo seleccionado"),
+                 textOutput("protocolo")
+               ),
+               hr(),
+               hr(),
+               
+               ###### ARCHIVO A PROCESAR    
+               fluidRow(
+                 h4("Archivo a procesar seleccionado"),
+                 textOutput("input_file")
+               ),
+               hr(),
+               hr(),
+               
+               ###### DIRECTORIO DE RESULTADOS
+               fluidRow(
+                 h4("Directorio de resultados seleccionado"),
+                 textOutput("output_dir")
+               ),
+               hr(),
+               hr(),
+               
+               ###### TABLA DE RESULTADOS
+               fluidRow( 
+                 h4("Tabla de resultados"),
+                 #textOutput("run_ready")
+                 dataTableOutput(outputId = 'run_ready')
+               )
+      ),
+      tabPanel(title = "Curvas",
+               value = "curves", 
+               plotOutput("plot1"),
+               plotOutput("plot2"),
+               plotOutput("plot3")
+               #dataTableOutput(outputId = 'summary_table_gene')
+      ),
+      tabPanel(title = "Configuración de la placa",
+               value = "plate", 
+               dataTableOutput(outputId = 'plate_conf')
+               #dataTableOutput(outputId = 'prueba'),
+               #plotlyOutput('coveragePlot', height = "400px")
+      )
     )
+    
   )
 )
 
@@ -153,20 +185,72 @@ server <- function(input, output, session) {
     output <- output_dir()
     
     withProgress(message = 'corriendo analisis', value = 0.3, {
-      qpcr_pipeline.cdc(rtpcr, paste(output, "/", sep=""))
-      table_summary <- read.table(paste(output, "result_table.txt", sep="/"), header=T)
+      all_results <- qpcr_pipeline.cdc(rtpcr, paste(output, "/", sep=""))
     })
     
-    return(table_summary)
+    return(all_results)
     
   })
   
   ####### DESPLEGAR TABLA DE RESULTADOS
   output$run_ready <- renderDataTable({
     table_out()
-    datatable(table_out())
+    
+    qc <- table_out()$qc_results
+    
+    if (qc$QC != "PASS"){
+      datatable(table_out()$test_results) %>% 
+        formatStyle('N1', 
+                    target='row',
+                    backgroundColor = "yellow" )
+    }else{
+      datatable(table_out()$test_results) %>% 
+        formatStyle( 'classification', 
+                     target = 'row',
+                     backgroundColor = styleEqual(c("positive", "negative"),
+                                                  c('aquamarine', 'pink')) )
+    }
   })
   
+  ####### IMPRIMIR CURVAS AL DARLE CLICK AL BOTON 
+  output$plot1 <- renderPlot({
+    table_out()
+    plots <- table_out()$plots_samples
+    plots[[1]][1]
+  })
+  
+  output$plot2 <- renderPlot({
+    table_out()
+    plots <- table_out()$plots_samples
+    plots[[1]][2]
+  })
+  
+  output$plot3 <- renderPlot({
+    table_out()
+    plots <- table_out()$plots_samples
+    plots[[1]][3]
+  })
+  
+  
+  
+  ####### OBTENER LA CONFIGURACION DE LA PLACA AL DARLE CLICK AL BOTON REPORTE PLACA
+  plate_out <- eventReactive(input$plate, {
+    
+    rtpcr <- input_file()
+    
+    if (is.null( rtpcr))
+      return("NO EXISTE ARCHIVO DE ENTRADA")
+    
+    plate_conf <- get_plate_conf(rtpcr)
+    return(plate_conf)
+  })
+   
+  ####### IMPRIMIR TABLA DE CONFUGURACION 
+  output$plate_conf <- renderDataTable({
+    plate_out()
+    datatable(plate_out())
+  })
+
 }
 
 # Run the application 
