@@ -298,6 +298,16 @@ plate_qc <- function(tdrn, all_probes){
     #select(!sample)
     select(-sample)
   
+  #check that all probes for EC DO NOT cross threshold; same as NTC
+  
+  ec.all <-
+    qc.results %>%
+    filter(grepl(pattern = "EC", x = sample)) %>%
+    #select(!sample) %>%
+    select(-sample) %>%
+    map_dfr(.f = function(i){all(i==Inf)}) %>% #all probes dont cross threshold
+    unlist %>% all(. == T) #this should be all true
+  
   ptc.all <-
     list(RP = all(ptc.all[["RP"]]<=35), #this should be T
          N1 = all(ptc.all[["N1"]]<=40), #this should be T
@@ -306,15 +316,17 @@ plate_qc <- function(tdrn, all_probes){
     unlist %>% all(. == T) #this should be all true
   
   
-  qc.assess <- ifelse(ntc.all & ptc.all, "PASS", "FAIL")
+  qc.assess <- ifelse(ntc.all & ptc.all & ec.all, "PASS", "FAIL")
   
   result_final <- list(qc.values = qc.results,
                        ntc.pass = ntc.all,
-                       ptc.pass = ptc.all, 
+                       ptc.pass = ptc.all,
+                       ec.pass  = ec.all,
                        QC = qc.assess)
   
   if(!ntc.all){print("NTC failed")}
   if(!ptc.all){print("PTC failed")}
+  if(!ec.all){print("EX failed")}
   
   return(result_final)
 
