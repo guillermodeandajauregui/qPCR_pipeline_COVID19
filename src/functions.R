@@ -249,13 +249,13 @@ plate_qc <- function(tdrn, all_probes){
   
   
   #extracts quality control wells
-  wells.ntc <- grep(pattern = "NTC", x = colnames(tdrn))
-  wells.ptc <- grep(pattern = "PTC", x = colnames(tdrn))
-  
+  wells.ntc <- grep(pattern = "_NTC", x = colnames(tdrn))
+  wells.ptc <- grep(pattern = "_PTC", x = colnames(tdrn))
+  wells.exc <- grep(pattern = "_EC", x = colnames(tdrn))
   ##and filter the tdrn
   qc.df <-
     tdrn %>% 
-    select(c(wells.ntc, wells.ptc), cycles) %>% 
+    select(c(wells.ntc, wells.ptc, wells.exc), cycles) %>% 
     pivot_deltaRN %>% 
     split_longtdrn
   
@@ -326,14 +326,15 @@ test.plate <- function(tdrn, probes){
   #takes a tdrn
   #returns a table with Ct for each probe, for each sample 
   
-  wells.ntc <- grep(pattern = "NTC", x = colnames(tdrn))
-  wells.ptc <- grep(pattern = "PTC", x = colnames(tdrn))
+  wells.ntc <- grep(pattern = "_NTC", x = colnames(tdrn))
+  wells.ptc <- grep(pattern = "_PTC", x = colnames(tdrn))
+  wells.exc <- grep(pattern = "_EC", x = colnames(tdrn))
   
   #extract the samples
   test.df <-
     tdrn %>% 
     #select(!c(wells.ntc, wells.ptc), cycles) %>%
-    select(-c(wells.ntc, wells.ptc), cycles) %>%
+    select(-c(wells.ntc, wells.ptc, wells.exc), cycles) %>%
     pivot_deltaRN %>% 
     separate(col = sample.id, sep = "_", into = c("well", 
                                                   "sample.label", 
@@ -367,21 +368,22 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
   #or non-qc wells
   
   #extracts quality control wells
-  wells.ntc <- grep(pattern = "NTC", x = colnames(tdrn))
-  wells.ptc <- grep(pattern = "PTC", x = colnames(tdrn))
+  wells.ntc <- grep(pattern = "_NTC", x = colnames(tdrn))
+  wells.ptc <- grep(pattern = "_PTC", x = colnames(tdrn))
+  wells.exc <- grep(pattern = "_EC", x = colnames(tdrn))
   
   ##and filter the tdrn
   if(qc == TRUE){
     qc.df <-
       tdrn %>% 
-      select(c(wells.ntc, wells.ptc), cycles) %>% 
+      select(c(wells.ntc, wells.ptc, wells.exc), cycles) %>% 
       pivot_deltaRN %>% 
       split_longtdrn
   }else{
     qc.df <-
       tdrn %>% 
       #select(!c(wells.ntc, wells.ptc), cycles) %>%
-      select(-c(wells.ntc, wells.ptc), cycles) %>%
+      select(-c(wells.ntc, wells.ptc, wells.exc), cycles) %>%
       pivot_deltaRN %>% 
       split_longtdrn
   }
