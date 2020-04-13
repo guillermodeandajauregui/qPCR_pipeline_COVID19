@@ -2,7 +2,7 @@
 #
 #functions for qPCR analysis - COVID19 detection
 #by: INMEGEN Computational Genomics Dept
-#Guillermo de Anda Jáuregui gdeanda@inmegen.edu.mx
+#Guillermo de Anda J??uregui gdeanda@inmegen.edu.mx
 #
 ################################################################################
 
@@ -326,12 +326,12 @@ test.plate <- function(tdrn, probes){
   #takes a tdrn
   #returns a table with Ct for each probe, for each sample 
   
-  wells.ntc <- grep(pattern = "NTC", x = colnames(my_deltaRN))
-  wells.ptc <- grep(pattern = "PTC", x = colnames(my_deltaRN))
+  wells.ntc <- grep(pattern = "NTC", x = colnames(tdrn))
+  wells.ptc <- grep(pattern = "PTC", x = colnames(tdrn))
   
   #extract the samples
   test.df <-
-    my_deltaRN %>% 
+    tdrn %>% 
     #select(!c(wells.ntc, wells.ptc), cycles) %>%
     select(-c(wells.ntc, wells.ptc), cycles) %>%
     pivot_deltaRN %>% 
