@@ -10,7 +10,7 @@ papersize: letterpaper
 
 
 report: true
-author: "Grupo de Genómica Computacional, INMEGEN"
+author: "Grupo de Gen??mica Computacional, INMEGEN"
 date: "`r Sys.time()`"
 
 id: "`r plate`"
@@ -30,7 +30,7 @@ width: 1
 logoposition: center
 logo: theme/Inmegenlogosalud.pdf
 ---
-```{r echo=F, results='asis'}
+```{r echo=F, warning=F, results='asis'}
 
 library(knitr)
 kable(my_r)
