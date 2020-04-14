@@ -7,7 +7,7 @@ $else$
 \usepackage[T1]{fontenc}
 $endif$
 
-\usepackage[table]{xcolor}
+\usepackage[table,xcdraw]{xcolor}
 
 \usepackage{abstract}
 \renewcommand{\abstractname}{}    % clear the title
@@ -159,24 +159,16 @@ $endif$
 % Watermarck: 
 
 \usepackage{draftwatermark}
-% \SetWatermarkText{\begin{minipage}{30cm}\centering \vskip 100pt \includegraphics{theme/watermark.pdf} \end{minipage}}
-% \SetWatermarkAngle{0}
+\SetWatermarkText{\begin{minipage}{26cm}\centering \vskip 10pt \includegraphics{theme/InmegenWatermark.pdf} \end{minipage}}
+\SetWatermarkAngle{0}
 
-$if(controls)$\SetWatermarkText{}
-$else$
-\SetWatermarkText{PLATE FAIL}
-\SetWatermarkScale{3}
-\SetWatermarkColor{red!50}
-$endif$
-% \SetWatermarkAngle{0}
 
 \begin{document}  
 
 \thispagestyle{plain} 
+\pagenumbering{gobble}
 
-
-$if(graphics)$$if(logo)$\Oldincludegraphics[width=$if(width)$$width$$else$0.3$endif$\textwidth, $if(logoposition)$$logoposition$$else$right$endif$]{$logo$}$else$$endif$$endif$
-
+\vspace*{\fill}
 
 $if(report)$
 \begin{center} 
@@ -198,15 +190,46 @@ Sample ID: $if(id)$\texttt{$id$}$else$TBD$endif$ & Date of report: $if(date)$\te
 	\hline
 	\end{tabular*}
 }	
-\vspace{1mm}
+\vspace{10mm}
 	
 
 \begin{center} 
-\normalsize \bfseries{\slshape{$id$ amplifaction plots}}
+\Large \bfseries{\slshape{Resultados de la muestra $id$}}
 \end{center}
+
+\vspace{20mm}
+
+Se procesó muestra \textbf{$id$} de isopado nasofaríngeo del paciente para la detección de material genético del nuevo Coronavirus (2019-nCoV) utilizando dos sondas (N1, N2) específicas de la nucleocápside del virus y utilizando la técnica de PCR tiempo real (qPCR).
+\\
+
+\begin{center}
+\begin{Form}
+\begin{tabular}{l}
+\hline
+Patógeno 2019-nCoV \\ \hline
+\ChoiceMenu[combo, width=3cm]{N1:}%
+{Detectado,No Detectado}\\
+\rowcolor[HTML]{EFEFEF} 
+\ChoiceMenu[combo, width=3cm]{N2:}%
+{Detectado,No Detectado}\\
+\ChoiceMenu[combo, width=3cm]{RP:}%
+{Detectado,No Detectado}\\ \hline
+\end{tabular}
+\end{Form}
+\end{center}
+
+\vspace{5mm}
+
+\begin{Form}
+Con base en los resultados de las pruebas moleculares \ChoiceMenu[combo]{}{Sí,No} se encontró evidencia de infección por coronavirus.
+\end{Form}
+
 
 
 $body$
+
+
+\vspace{50mm}
 
 
 {\fontfamily{cmss}\selectfont

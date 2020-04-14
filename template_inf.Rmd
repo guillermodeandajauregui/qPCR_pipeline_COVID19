@@ -4,7 +4,7 @@ output:
     keep_tex: false
     fig_caption: yes
     latex_engine: pdflatex
-    template: theme/latexTemplate.tex
+    template: theme/latexTemplate_info.tex
 geometry: margin=0.7in
 papersize: letterpaper
 
@@ -31,10 +31,4 @@ logoposition: center
 logo: theme/Inmegenlogosalud.pdf
 ---
 
-```{r, echo = F, warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
 
-
-mea_plote
-
-
-```

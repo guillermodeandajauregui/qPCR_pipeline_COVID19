@@ -11,7 +11,7 @@
 #libraries
 ################################################################################
 source("src/functions.R")
-
+source("src/plots.R")
 ################################################################################
 #read data
 ################################################################################
@@ -68,21 +68,26 @@ plots.qc <- plot.curves(tdrn = my_deltaRN,
 plots.samples <- plot.curves(tdrn = my_deltaRN, 
                              probes = cdc_probes, 
                              qc = F)
-################################################################################
-#Sample diagnostic
-################################################################################
 
-test_diagnosis <- cdc_classification(test.results)
+triplets.qc <- triplets(plots.qc)
+
+triplets.samples <- triplets(plots.samples)
 
 ################################################################################
 #Write individual reports
 ################################################################################
 
-make_reports(plot_list = plots.qc, 
+make_reports(plot_list = triplets.samples, 
              result_table = qc_results$qc.values, 
+             qc_results = qc_results$QC,
              outdir = output, 
              qc = T)
 
+################################################################################
+#Sample diagnostic
+################################################################################
+
+test_diagnosis <- cdc_classification(test.results)
 
 ################################################################################
 #Write QC output
