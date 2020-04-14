@@ -80,6 +80,7 @@ test_diagnosis <- cdc_classification(test.results)
 
 make_reports(plot_list = plots.qc, 
              result_table = qc_results$qc.values, 
+             qc_results = qc_results$QC,
              outdir = output, 
              qc = T)
 
