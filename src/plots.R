@@ -110,6 +110,7 @@ triplets <- function(curve.list){
 
 make_reports <- function(plot_list, 
                          result_table,
+                         input,
                          outdir, 
                          qc_results,
                          qc = F){

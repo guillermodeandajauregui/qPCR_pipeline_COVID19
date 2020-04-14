@@ -79,9 +79,10 @@ triplets.samples <- triplets(plots.samples)
 
 make_reports(plot_list = triplets.samples, 
              result_table = qc_results$qc.values, 
-             qc_results = qc_results$QC,
+             input = input,
              outdir = output, 
-             qc = T)
+             qc_results = qc_results$QC,
+             qc = F)
 
 ################################################################################
 #Sample diagnostic

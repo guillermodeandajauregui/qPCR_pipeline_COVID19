@@ -37,30 +37,27 @@ kable(my_r)
 ```
 
 ##### NTC
-```{r, echo = F, results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=5.7, fig.align='center'}
 
+```{r, echo = F, results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=5.7, fig.align='center'}
 
 plot_list[ntc]
 
-
 ```
-
 \pagebreak
-##### PTC
-```{r, echo = F,  results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
 
+##### PTC
+
+```{r, echo = F,  results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
 
 plot_list[ptc]
 
-
 ```
-
 \pagebreak
+
 ##### EC
+
 ```{r, echo = F,  results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
 
-
 plot_list[exc]
-
 
 ```
