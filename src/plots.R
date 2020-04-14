@@ -1,5 +1,28 @@
 library("cowplot")
+library("ggpubrf")
 
+##### plot_deltaRN.long 
+
+plot_deltaRN.long <- function(tdrn_long, 
+                              guide_title = "muestra", 
+                              y_title = "Delta_RN"){
+  #takes a long_tdrn
+  #plots all curves in it, grouped by sample.id
+  #(syntactic sugar)
+  tdrn_long %>% 
+    ggplot(mapping = aes(x = cycles, 
+                         y = value, 
+                         colour = as.factor(sample.id)
+    )
+    ) + 
+    geom_line() +
+    guides(color = guide_legend(title = guide_title)) +
+    ylab(y_title) +
+    theme_minimal()+
+    theme(legend.position = "none",
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank())
+}
 
 
 ##### plot.curves
@@ -53,11 +76,25 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
         p <- 
           plot_deltaRN.long(tdrn_long = the_curve) + 
           geom_line(colour = color) +
-          geom_hline(yintercept = the_threshold, linetype = 2)
-        
+          geom_hline(yintercept = the_threshold, linetype = 2) 
       })
       
       
     })
 }
 
+
+triplets <- function(curve.list){
+	triplet <- lapply(seq_along(curve.list), function(i){
+	plot_grid(curve.list[[i]]$RP, curve.list[[i]]$N1, curve.list[[i]]$N2, 
+		labels = c("RP", "N1", "N2"),
+		ncol = 1, nrow = 3,
+		label_size = 12)
+	})
+	triplets <- lapply(seq_along(triplet), function(i){
+	annotate_figure(triplet[[i]], bottom = text_grob("Cycles", size = 16, hjust = 1, face = "bold"),
+                left = text_grob("Delta RN", size = 16, rot = 90, face = "bold"))
+	})
+	names(triplets) <- names(curve.list)
+	return(triplets)
+}
