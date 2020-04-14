@@ -84,6 +84,13 @@ make_reports(plot_list = triplets.samples,
              qc_results = qc_results$QC,
              qc = F)
 
+make_reports(plot_list = triplets.qc, 
+             result_table = qc_results$qc.values, 
+             input = input,
+             outdir = output, 
+             qc_results = qc_results$QC,
+             qc = T)
+
 ################################################################################
 #Sample diagnostic
 ################################################################################
@@ -114,7 +121,9 @@ results_list <- list(
   test_results = test_diagnosis,
   qc_results = qc_results, 
   plots_qc = plots.qc, 
-  plots_samples = plots.samples
+  plots_samples = plots.samples,
+  triplets.qc = triplets.qc, 
+  triplets.samples = triplets.samples
 )
 
 return(results_list)
