@@ -28,7 +28,7 @@ ui <- fluidPage(
   #                column(width = 6, h2("Aplicaci??n para an??lisis de RT-PCR")), 
   #            windowTitle="MyPage"),
   
-  titlePanel( div(column(width = 6, h1("Aplicación para análisis de RT-PCR")), 
+  titlePanel( div(column(width = 6, h1("Aplicaci??n para an??lisis de RT-PCR")), 
                   column(width = 4, tags$img(src = "images/inmegen.jpg"))),
               windowTitle="rt-PCR-analysis"),
   
@@ -60,12 +60,12 @@ ui <- fluidPage(
     hr(),
     
     ######## BUTTON TO PRINT PLOTS TO WEB
-    h5('Presiona para imprimir las curvas en la interfaz web'),
-    actionButton("plot", "Imprimir curvas en Web"),
+    h5('Presiona para imprimir las curvas control en la interfaz web'),
+    actionButton("plot", "Imprimir curvas control en Web"),
     hr(),
     
     ######## BUTTON TO GENERATE PLATE CONFIGURATION TABLE
-    h5('Presiona para generar la tabla de configuración de la placa'),
+    h5('Presiona para generar la tabla de configuraci??n de la placa'),
     actionButton("plate", "Reporte placa")
 
   ),
@@ -109,14 +109,23 @@ ui <- fluidPage(
                  dataTableOutput(outputId = 'run_ready')
                )
       ),
-      tabPanel(title = "Curvas",
+      tabPanel(title = "Curvas control",
                value = "curves", 
+               h3(textOutput("caption1")),
                plotOutput("plot1"),
+               br(),
+               br(),
+               br(),
+               h2(textOutput("caption2")),
                plotOutput("plot2"),
+               br(),
+               br(),
+               br(),
+               h2(textOutput("caption3")),
                plotOutput("plot3")
                #dataTableOutput(outputId = 'summary_table_gene')
       ),
-      tabPanel(title = "Configuración de la placa",
+      tabPanel(title = "Configuraci??n de la placa",
                value = "plate", 
                dataTableOutput(outputId = 'plate_conf')
                #dataTableOutput(outputId = 'prueba'),
@@ -186,7 +195,7 @@ server <- function(input, output, session) {
     output <- output_dir()
     
     withProgress(message = 'corriendo analisis', value = 0.3, {
-      all_results <- qpcr_pipeline.cdc(rtpcr, paste(output, "/", sep=""))
+      all_results <- qpcr_pipeline.cdc(input=rtpcr, output=paste(output, "/", sep=""))
     })
     
     return(all_results)
@@ -214,22 +223,38 @@ server <- function(input, output, session) {
   })
   
   ####### IMPRIMIR CURVAS AL DARLE CLICK AL BOTON 
+  
+  output$caption1 <- renderText({
+    table_out()
+    names(table_out()$triplets.qc)[1]
+  })
+  
   output$plot1 <- renderPlot({
     table_out()
-    plots <- table_out()$plots_samples
-    plots[[1]][1]
+    plots <- table_out()$triplets.qc
+    (plots[[1]] + ggtitle(labels(plots)[1]))
+  })
+  
+  output$caption2 <- renderText({
+    table_out()
+    names(table_out()$triplets.qc)[2]
   })
   
   output$plot2 <- renderPlot({
     table_out()
-    plots <- table_out()$plots_samples
-    plots[[1]][2]
+    plots <- table_out()$triplets.qc
+    (plots[[2]] + ggtitle(labels(plots)[2]))
+  })
+  
+  output$caption3 <- renderText({
+    table_out()
+    names(table_out()$triplets.qc)[3]
   })
   
   output$plot3 <- renderPlot({
     table_out()
-    plots <- table_out()$plots_samples
-    plots[[1]][3]
+    plots <- table_out()$triplets.qc
+    (plots[[3]] + ggtitle(labels(plots)[3]))
   })
   
   
