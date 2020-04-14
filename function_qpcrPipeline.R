@@ -202,24 +202,24 @@ the_plots <-
 
 ##### we will have an id table for the samples; let's mock one up
 
-annotationFile <-
-  my_deltaRN.long %>%
-  select(well) %>%
-  unique() %>%
-  mutate(well = as.numeric(well)) %>% 
-  mutate(well.id = paste0(LETTERS[(well%/%12 + 1)], (well%%12 + 1))) %>% 
-  mutate(well = as.character(well)) %>% 
-  mutate(id.external = paste0("sample_", letters[1:12]),
-         id.internal = paste0("inmegen_", 
-                              str_pad(1:12, 
-                                      2, 
-                                      side = "left", 
-                                      pad = 0)
-         )
-  )
-
-my_results <- 
-  left_join(annotationFile, my_results)
+# annotationFile <-
+#   my_deltaRN.long %>%
+#   select(well) %>%
+#   unique() %>%
+#   mutate(well = as.numeric(well)) %>% 
+#   mutate(well.id = paste0(LETTERS[(well%/%12 + 1)], (well%%12 + 1))) %>% 
+#   mutate(well = as.character(well)) %>% 
+#   mutate(id.external = paste0("sample_", nrow(my_deltaRN.long)),
+#          id.internal = paste0("inmegen_", 
+#                               str_pad(1:nrow(my_deltaRN.long), 
+#                                       2, 
+#                                       side = "left", 
+#                                       pad = 0)
+#          )
+#   )
+# 
+# my_results <- 
+#   left_join(annotationFile, my_results)
 
 ##### Finally, we evaluate the conditions based on the rules set in the PNO
 

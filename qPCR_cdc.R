@@ -16,7 +16,7 @@ source("src/functions.R")
 #read data
 ################################################################################
 
-resultados <- "data/mock_cdc_2probes.eds"
+resultados <- "data/mock_cdc_3.eds"
 
 my_deltaRN <- tidy_deltaRN(resultados) #read deltaRN from EDS file 
 

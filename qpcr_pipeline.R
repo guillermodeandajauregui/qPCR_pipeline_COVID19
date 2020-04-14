@@ -203,9 +203,9 @@ my_deltaRN.long %>%
   mutate(well = as.numeric(well)) %>% 
   mutate(well.id = paste0(LETTERS[(well%/%12 + 1)], (well%%12 + 1))) %>% 
   mutate(well = as.character(well)) %>% 
-  mutate(id.external = paste0("sample_", letters[1:12]),
+  mutate(id.external = paste0("sample_", nrow(my_deltaRN.long)),
          id.internal = paste0("inmegen_", 
-                              str_pad(1:12, 
+                              str_pad(1:nrow(my_deltaRN.long), 
                                       2, 
                                       side = "left", 
                                       pad = 0)
