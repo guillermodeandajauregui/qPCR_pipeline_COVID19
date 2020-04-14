@@ -21,7 +21,13 @@ plot_deltaRN.long <- function(tdrn_long,
     theme_minimal()+
     theme(legend.position = "none",
           axis.title.x = element_blank(),
-          axis.title.y = element_blank())
+          axis.title.y = element_blank(),
+          plot.margin = margin(1, 1, 1, 1, "mm"),
+          plot.background = element_rect(
+    							fill = NULL,
+    							colour = "darkgrey",
+    							size = 0.3)
+          )
 }
 
 
@@ -76,7 +82,7 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
         p <- 
           plot_deltaRN.long(tdrn_long = the_curve) + 
           geom_line(colour = color) +
-          geom_hline(yintercept = the_threshold, linetype = 2) 
+          geom_hline(yintercept = the_threshold, linetype = 2, colour = "maroon") 
       })
       
       
