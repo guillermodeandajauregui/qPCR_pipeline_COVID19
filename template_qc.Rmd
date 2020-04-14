@@ -35,7 +35,7 @@ header-includes:
 graphics: true
 width: 1
 logoposition: center
-logo: theme/logos.pdf
+logo: theme/Inmegenlogosalud.pdf
 ---
 
 ```{r echo=F, results='asis'}
@@ -45,52 +45,20 @@ kable(my_r)
 ```
 
 
-### Probe RNAsaP
-
 ```{r, echo = F, warning=F}
 
-if(is.na(mea_plote[["RP"]])){
-  print("there is no plot")
-}else{
-  #print("there is a plot to print")
-  p <- mea_plote[["RP"]] + 
+RP <- mea_plote[["RP"]] + 
     theme(legend.position = "none") +
-    ggtitle("probe RP")
-  plot(p)
-}
 
-```
-
-### Probe N1
-
-```{r, echo = F, warning=F}
-
-if(is.na(mea_plote[["N1"]])){
-  print("there is no plot")
-}else{
-  #print("there is a plot to print")
-  p <- mea_plote[["N1"]] + 
+N1 <- mea_plote[["N1"]] + 
     theme(legend.position = "none") +
-    ggtitle("probe N1")
-  plot(p)
-}
 
-
-```
-
-### Probe N2
-
-```{r, echo = F, warning=F}
-
-if(is.na(mea_plote[["N2"]])){
-  print("there is no plot")
-}else{
-  #print("there is a plot to print")
-  p <- mea_plote[["N2"]] + 
+N2 <- mea_plote[["N2"]] + 
     theme(legend.position = "none") +
-    ggtitle("probe N2")
-  plot(p)
-}
+
+plot_grid(RP, N1, N2, 
+          labels = c("RP", "N1", "N2"),
+          ncol = 1, nrow = 3)
 
 
 ```
