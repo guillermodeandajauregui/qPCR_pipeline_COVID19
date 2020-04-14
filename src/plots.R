@@ -109,6 +109,7 @@ make_reports <- function(plot_list,
                          qc = F){
   qcplate <- ifelse(qc_results == "PASS", "true", "")
   #makes reports from a list of plots and some result table
+  if(qc==F){
   lapply(seq_along(plot_list), function(i){
     
     the_sample_is <- names(plot_list)[i]
@@ -121,10 +122,16 @@ make_reports <- function(plot_list,
     mea_plote <- plot_list[i]
     
     outpath <- paste0(outdir, "/", Sys.Date(), "_", my_name, ".pdf")
-    if(qc==F){
-      render("template.Rmd",output_file = outpath)
-    }else{
-      render("template_qc.Rmd",output_file = outpath)
-    }
-  })
+    outpath_inf <- paste0(outdir, "/", Sys.Date(), "_", my_name, "_results.pdf")
+    render("template_inf.Rmd", output_file = outpath_inf)
+    render("template.Rmd",output_file = outpath)})
+  }else{
+  	my_r <- result_table
+    ntc <- grep(pattern = "NTC", x = names(plot_list))
+	ptc <- grep(pattern = "PTC", x = names(plot_list))
+ 	exc <- grep(pattern = "EC", x = names(plot_list))
+    plate <- stringr::str_remove(string = basename(input), pattern = ".eds")
+    outpath <- paste0(outdir, "/", Sys.Date(), "_", plate, ".pdf")
+    render("template_qc.Rmd",output_file = outpath)
+  }
 }

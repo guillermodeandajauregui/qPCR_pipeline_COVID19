@@ -10,18 +10,11 @@ papersize: letterpaper
 
 
 report: true
-title: "`r my_r$sample`"
 author: "Grupo de Genómica Computacional, INMEGEN"
 date: "`r Sys.time()`"
 
-patient: "`r my_r$sample`"
-id: "id.internal"
-institution: "id.external"
-
-# To generate a red flag when the plait 
-# controls fail, the variable "controls"
-# must be passed to "false"
-controls: true
+id: "`r plate`"
+controls: "`r qcplate`"
 
 
 email: "dr.gecko@inmegen.gob.mx"
@@ -37,7 +30,6 @@ width: 1
 logoposition: center
 logo: theme/Inmegenlogosalud.pdf
 ---
-
 ```{r echo=F, results='asis'}
 
 library(knitr)
@@ -45,20 +37,30 @@ kable(my_r)
 ```
 
 
-```{r, echo = F, warning=F}
+```{r, echo = F, warning=F, fig.width=6, fig.height=5.7, fig.align='center'}
 
-RP <- mea_plote[["RP"]] + 
-    theme(legend.position = "none") +
 
-N1 <- mea_plote[["N1"]] + 
-    theme(legend.position = "none") +
+plot_list[ntc]
 
-N2 <- mea_plote[["N2"]] + 
-    theme(legend.position = "none") +
 
-plot_grid(RP, N1, N2, 
-          labels = c("RP", "N1", "N2"),
-          ncol = 1, nrow = 3)
+```
+
+\pagebreak
+
+```{r, echo = F, warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
+
+
+plot_list[ptc]
+
+
+```
+
+\pagebreak
+
+```{r, echo = F, warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
+
+
+plot_list[exc]
 
 
 ```

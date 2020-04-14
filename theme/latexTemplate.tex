@@ -159,14 +159,12 @@ $endif$
 % Watermarck: 
 
 \usepackage{draftwatermark}
-% \SetWatermarkText{\begin{minipage}{30cm}\centering \vskip 100pt \includegraphics{theme/watermark.pdf} \end{minipage}}
-% \SetWatermarkAngle{0}
 
 $if(controls)$\SetWatermarkText{}
 $else$
 \SetWatermarkText{PLATE FAIL}
 \SetWatermarkScale{3}
-\SetWatermarkColor{red!50}
+\SetWatermarkColor{red!30}
 $endif$
 % \SetWatermarkAngle{0}
 
