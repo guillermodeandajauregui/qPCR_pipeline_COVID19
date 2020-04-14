@@ -1,5 +1,5 @@
 library("cowplot")
-library("ggpubrf")
+library("ggpubr")
 
 ##### plot_deltaRN.long 
 
@@ -89,12 +89,41 @@ triplets <- function(curve.list){
 	plot_grid(curve.list[[i]]$RP, curve.list[[i]]$N1, curve.list[[i]]$N2, 
 		labels = c("RP", "N1", "N2"),
 		ncol = 1, nrow = 3,
-		label_size = 12)
+		label_size = 11,
+		hjust = 1)
 	})
 	triplets <- lapply(seq_along(triplet), function(i){
-	annotate_figure(triplet[[i]], bottom = text_grob("Cycles", size = 16, hjust = 1, face = "bold"),
-                left = text_grob("Delta RN", size = 16, rot = 90, face = "bold"))
+	annotate_figure(triplet[[i]], bottom = text_grob("Cycles", size = 10, hjust = 1),
+                left = text_grob("Delta RN", size = 10, rot = 90))
 	})
 	names(triplets) <- names(curve.list)
 	return(triplets)
+}
+
+######make_reports
+
+make_reports <- function(plot_list, 
+                         result_table,
+                         outdir, 
+                         #qc.result,
+                         qc = F){
+  #makes reports from a list of plots and some result table
+  lapply(seq_along(plot_list), function(i){
+    
+    the_sample_is <- names(plot_list)[i]
+    
+    my_r <- 
+      result_table %>% 
+      filter(sample == the_sample_is)
+    
+    my_name <- names(plot_list)[i]
+    mea_plote <- plot_list[i]
+    
+    outpath <- paste0(outdir, "/", Sys.Date(), "_", my_name, ".pdf")
+    if(qc==F){
+      render("template.Rmd",output_file = outpath)
+    }else{
+      render("template_qc.Rmd",output_file = outpath)
+    }
+  })
 }

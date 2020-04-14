@@ -14,15 +14,8 @@ title: "`r my_r$well`"
 author: "Grupo de Genómica Computacional, INMEGEN"
 date: "`r Sys.time()`"
 
-patient: "`r my_r$well`"
-id: "id.internal"
-institution: "id.external"
-pre-diagnosis: "`r my_r$diagnosis`"
-
-# To generate a red flag when the plait 
-# controls fail, the variable "controls"
-# must be passed to "false"
-controls: true
+id: "`r the_sample_is`"
+controls: "`r qcplate`"
 
 
 email: "dr.gecko@inmegen.gob.mx"
@@ -36,56 +29,13 @@ header-includes:
 graphics: true
 width: 1
 logoposition: center
-logo: theme/logos.pdf
+logo: theme/Inmegenlogosalud.pdf
 ---
 
-
-### Probe RNAsaP
-
-```{r, echo = F, warning=F}
-
-if(is.na(mea_plote[["RP"]])){
-  print("there is no plot")
-}else{
-  #print("there is a plot to print")
-  p <- mea_plote[["RP"]] + 
-    theme(legend.position = "none") +
-    ggtitle("probe RP")
-  plot(p)
-}
-
-```
-
-### Probe N1
-
-```{r, echo = F, warning=F}
-
-if(is.na(mea_plote[["N1"]])){
-  print("there is no plot")
-}else{
-  #print("there is a plot to print")
-  p <- mea_plote[["N1"]] + 
-    theme(legend.position = "none") +
-    ggtitle("probe N1")
-  plot(p)
-}
+```{r, echo = F, warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
 
 
-```
-
-### Probe N2
-
-```{r, echo = F, warning=F}
-
-if(is.na(mea_plote[["N2"]])){
-  print("there is no plot")
-}else{
-  #print("there is a plot to print")
-  p <- mea_plote[["N2"]] + 
-    theme(legend.position = "none") +
-    ggtitle("probe N2")
-  plot(p)
-}
+mea_plote
 
 
 ```

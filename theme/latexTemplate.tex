@@ -158,10 +158,17 @@ $endif$
 
 % Watermarck: 
 
-% \usepackage{draftwatermark}
+\usepackage{draftwatermark}
 % \SetWatermarkText{\begin{minipage}{30cm}\centering \vskip 100pt \includegraphics{theme/watermark.pdf} \end{minipage}}
 % \SetWatermarkAngle{0}
 
+$if(controls)$\SetWatermarkText{}
+$else$
+\SetWatermarkText{PLATE FAIL}
+\SetWatermarkScale{3}
+\SetWatermarkColor{red!50}
+$endif$
+% \SetWatermarkAngle{0}
 
 \begin{document}  
 
@@ -186,18 +193,16 @@ $endif$
 	\noindent \begin{tabular*}{\textwidth}{ @{\extracolsep{\fill}} lr @{\extracolsep{\fill}}}
 
 
-Patienrt: $if(patient)$\texttt{$patient$}$else$TBD$endif$ & Date of report: $if(date)$\texttt{$date$}$else$TBD$endif$\\
- Sample ID: $if(id)$\texttt{$id$}$else$TBD$endif$  &  Institution of origin: $if(institution)$\texttt{$institution$}$else$TBD$endif$\\
- Pre-diagnosis: $if(pre-diagnosis)$\texttt{$pre-diagnosis$}$else$TBD$endif$  & Plate controls: $if(controls)$\texttt{PASS}$else$\cellcolor{red!50}\texttt{FAIL}$endif$\\
-	&  \\
+Sample ID: $if(id)$\texttt{$id$}$else$TBD$endif$ & Date of report: $if(date)$\texttt{$date$}$else$TBD$endif$\\
+ Institution of origin: $if(institution)$\texttt{$institution$}$else$TBD$endif$ & Plate controls: $if(controls)$\texttt{PASS}$else$\cellcolor{red!50}\texttt{FAIL}$endif$\\
 	\hline
 	\end{tabular*}
 }	
-\vspace{2mm}
+\vspace{1mm}
 	
 
 \begin{center} 
-\normalsize \bfseries{\slshape{qPCR amplifaction plots}}
+\normalsize \bfseries{\slshape{$id$ amplifaction plots}}
 \end{center}
 
 
