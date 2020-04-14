@@ -86,8 +86,8 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
 
 triplets <- function(curve.list){
 	triplet <- lapply(seq_along(curve.list), function(i){
-	plot_grid(curve.list[[i]]$RP, curve.list[[i]]$N1, curve.list[[i]]$N2, 
-		labels = c("RP", "N1", "N2"),
+	plot_grid(curve.list[[i]]$N1, curve.list[[i]]$N2, curve.list[[i]]$RP, 
+		labels = c("N1", "N2", "RP"),
 		ncol = 1, nrow = 3,
 		label_size = 11,
 		hjust = 1)
@@ -105,8 +105,9 @@ triplets <- function(curve.list){
 make_reports <- function(plot_list, 
                          result_table,
                          outdir, 
-                         #qc.result,
+                         qc_results,
                          qc = F){
+  qcplate <- ifelse(qc_results == "PASS", "true", "")
   #makes reports from a list of plots and some result table
   lapply(seq_along(plot_list), function(i){
     
