@@ -28,7 +28,7 @@ ui <- fluidPage(
   #                column(width = 6, h2("Aplicaci??n para an??lisis de RT-PCR")), 
   #            windowTitle="MyPage"),
   
-  titlePanel( div(column(width = 6, h1("Aplicaci??n para an??lisis de RT-PCR")), 
+  titlePanel( div(column(width = 6, h1("Aplicativo para analizar datos de RT-PCR")), 
                   column(width = 4, tags$img(src = "images/inmegen.jpg"))),
               windowTitle="rt-PCR-analysis"),
   
@@ -60,12 +60,12 @@ ui <- fluidPage(
     hr(),
     
     ######## BUTTON TO PRINT PLOTS TO WEB
-    h5('Presiona para imprimir las curvas control en la interfaz web'),
-    actionButton("plot", "Imprimir curvas control en Web"),
-    hr(),
+    #h5('Presiona para imprimir las curvas control en la interfaz web'),
+    #actionButton("plot", "Imprimir curvas control en Web"),
+    #hr(),
     
     ######## BUTTON TO GENERATE PLATE CONFIGURATION TABLE
-    h5('Presiona para generar la tabla de configuraci??n de la placa'),
+    h5('Presiona para generar el reporte de la placa'),
     actionButton("plate", "Reporte placa")
 
   ),
@@ -125,7 +125,7 @@ ui <- fluidPage(
                plotOutput("plot3")
                #dataTableOutput(outputId = 'summary_table_gene')
       ),
-      tabPanel(title = "Configuraci??n de la placa",
+      tabPanel(title = "Reporte de la placa",
                value = "plate", 
                dataTableOutput(outputId = 'plate_conf')
                #dataTableOutput(outputId = 'prueba'),
