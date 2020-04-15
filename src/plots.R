@@ -1,5 +1,22 @@
+################################################################################
+#
+# Plot and report functions for qPCR analysis - COVID19 detection
+#by: INMEGEN Computational Genomics Dept
+#Guillermo de Anda J??uregui gdeanda@inmegen.edu.mx
+# and Hugo Tovar hatovar@inmegen.gob.mx
+#
+################################################################################
+
+
+################################################################################
+#required libs
+################################################################################
 library("cowplot")
 library("ggpubr")
+
+################################################################################
+#define analysis functions here
+################################################################################
 
 ##### plot_deltaRN.long 
 

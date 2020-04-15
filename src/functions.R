@@ -127,25 +127,6 @@ get_plate <- function(tdrn){
   mx <-as.data.frame(t(mx))
   return(mx)
 }
-# ##### plot_deltaRN.long 
-
-# plot_deltaRN.long <- function(tdrn_long, 
-#                               guide_title = "muestra", 
-#                               y_title = "Delta_RN"){
-#   #takes a long_tdrn
-#   #plots all curves in it, grouped by sample.id
-#   #(syntactic sugar)
-#   tdrn_long %>% 
-#     ggplot(mapping = aes(x = cycles, 
-#                          y = value, 
-#                          colour = as.factor(sample.id)
-#     )
-#     ) + 
-#     geom_line() +
-#     guides(color = guide_legend(title = guide_title)) +
-#     ylab(y_title) +
-#     theme_minimal()
-# }
 
 ##### extract_curve
 
@@ -373,63 +354,6 @@ test.plate <- function(tdrn, probes){
   
 }
 
-# ##### plot.curves
-# plot.curves <- function(tdrn, probes, qc = TRUE){
-#   #takes an tdrn file
-#   #makes plots for either qc wells
-#   #or non-qc wells
-  
-#   #extracts quality control wells
-#   wells.ntc <- grep(pattern = "_NTC", x = colnames(tdrn))
-#   wells.ptc <- grep(pattern = "_PTC", x = colnames(tdrn))
-#   wells.exc <- grep(pattern = "_EC", x = colnames(tdrn))
-  
-#   ##and filter the tdrn
-#   if(qc == TRUE){
-#     qc.df <-
-#       tdrn %>% 
-#       select(c(wells.ntc, wells.ptc, wells.exc), cycles) %>% 
-#       pivot_deltaRN %>% 
-#       split_longtdrn
-#   }else{
-#     qc.df <-
-#       tdrn %>% 
-#       #select(!c(wells.ntc, wells.ptc), cycles) %>%
-#       select(-c(wells.ntc, wells.ptc, wells.exc), cycles) %>%
-#       pivot_deltaRN %>% 
-#       split_longtdrn
-#   }
-  
-  
-#   #name for iteration
-#   qc.samples <- unique(qc.df$sample.label)
-#   names(qc.samples) <- qc.samples
-  
-#   #analyze qc
-#   qc.results <- 
-#     lapply(qc.samples, FUN = function(my_sample){
-      
-#       sample_data <-
-#         qc.df %>% 
-#         filter(sample.label == my_sample) 
-      
-#       lapply(X = probes, FUN = function(my_probe){
-        
-#         the_curve     <- extract_curve(sample_data, probe == my_probe)
-#         #extract threshold
-        
-        
-#         the_threshold <- get_threshold.rg(the_curve)
-        
-#         p <- 
-#           plot_deltaRN.long(tdrn_long = the_curve) + 
-#           geom_hline(yintercept = the_threshold, linetype = 2)
-        
-#       })
-      
-      
-#     })
-# }
 
 ##### cdc_classification
 cdc_classification <- function(SampleResults){
@@ -449,31 +373,3 @@ cdc_classification <- function(SampleResults){
     )
 }
 
-
-# ######make_reports
-
-# make_reports <- function(plot_list, 
-#                          result_table,
-#                          outdir, 
-#                          #qc.result,
-#                          qc = F){
-#   #makes reports from a list of plots and some result table
-#   lapply(seq_along(plot_list), function(i){
-    
-#     the_sample_is <- names(plot_list)[i]
-    
-#     my_r <- 
-#       result_table %>% 
-#       filter(sample == the_sample_is)
-    
-#     my_name <- names(plot_list)[i]
-#     mea_plote <- plot_list[[i]]
-    
-#     outpath <- paste0(outdir, "/", Sys.Date(), "_", my_name, ".pdf")
-#     if(qc==F){
-#       render("template.Rmd",output_file = outpath)
-#     }else{
-#       render("template_qc.Rmd",output_file = outpath)
-#     }
-#   })
-# }
