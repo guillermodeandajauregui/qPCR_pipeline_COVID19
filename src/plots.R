@@ -150,7 +150,8 @@ make_reports <- function(plot_list,
     render("template_inf.Rmd", output_file = outpath_inf)
     render("template.Rmd",output_file = outpath)})
   }else{
-  	my_r <- result_table
+  	my_r <- as.matrix(result_table)
+  	my_r[my_r == "Inf"] <- "45+"
     ntc <- grep(pattern = "NTC", x = names(plot_list))
 	ptc <- grep(pattern = "PTC", x = names(plot_list))
  	exc <- grep(pattern = "EC", x = names(plot_list))
