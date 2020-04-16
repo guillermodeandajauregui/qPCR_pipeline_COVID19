@@ -290,9 +290,9 @@ plate_qc <- function(tdrn, all_probes){
     unlist %>% all(. == T) #this should be all true
   
   ptc.all <-
-    list(RP = all(ptc.all[["RP"]]<=35), #this should be T
-         N1 = all(ptc.all[["N1"]]<=40), #this should be T
-         N2 = all(ptc.all[["N2"]]<=40)  #this should be T
+    list(RP = all(ptc.all[["RP"]]>=35), #this should be T, do not amplify
+         N1 = all(ptc.all[["N1"]]<=40), #this should be T, amplify
+         N2 = all(ptc.all[["N2"]]<=40)  #this should be T, amplify
          ) %>% 
     unlist %>% all(. == T) #this should be all true
   
