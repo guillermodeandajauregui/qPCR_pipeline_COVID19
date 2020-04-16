@@ -296,7 +296,6 @@ plate_qc <- function(tdrn, all_probes){
          ) %>% 
     unlist %>% all(. == T) #this should be all true
   
-  
   qc.assess <- ifelse(ntc.all & ptc.all & ec.all, "PASS", "FAIL")
   
   result_final <- list(qc.values = qc.results,
