@@ -291,8 +291,8 @@ plate_qc <- function(tdrn, all_probes){
   
   ptc.all <-
     list(RP = all(ptc.all[["RP"]]>=35), #this should be T, do not amplify
-         N1 = all(ptc.all[["N1"]]<=40), #this should be T, amplify
-         N2 = all(ptc.all[["N2"]]<=40)  #this should be T, amplify
+         N1 = all(ptc.all[["N1"]]<=38), #this should be T, amplify
+         N2 = all(ptc.all[["N2"]]<=38)  #this should be T, amplify
          ) %>% 
     unlist %>% all(. == T) #this should be all true
   
@@ -361,9 +361,9 @@ cdc_classification <- function(SampleResults){
   SampleResults %>% 
     mutate(classification = ifelse(test = RP > 35, 
                                    "invalid",
-                                   ifelse(N1 <= 40 & N2 <= 40, 
+                                   ifelse(N1 <= 38 & N2 <= 38, 
                                           "positive", 
-                                          ifelse(N1 > 40 & N2 > 40,
+                                          ifelse(N1 > 38 & N2 > 38,
                                                  "negative", 
                                                  "inconclusive"
                                           )
