@@ -186,6 +186,33 @@ get_threshold.rg <- function(curve){
 
 }
 
+##### get_plateThreshold
+
+get_plateThreshold <- function(tdrn_long){
+  #sets the baseline as the average value of all wells 
+  #in the initial times
+  #based on 
+  #Quant Studio 6 and 7 user manual
+  #calculates the mean and standard deviation (SD) of the signal in the cycles 
+  #3-10 and places the threshold at mean+10*SD 
+  
+  mean.ini <- 
+    tdrn_long %>% 
+    filter(cycles%in%3:10) %>% 
+    pull(value) %>% 
+    mean
+  
+  sd.ini <- 
+    tdrn_long %>% 
+    filter(cycles%in%3:10) %>% 
+    pull(value) %>% 
+    sd
+  
+  my_threshold <- mean.ini + (10 * sd.ini)
+  return(my_threshold)
+  
+}
+
 ##### analyze_sample
 analyze_sample <- function(tdrn_sample, probes){
   #takes a filtered tdrn for a single sample
