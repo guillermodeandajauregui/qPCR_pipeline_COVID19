@@ -214,8 +214,9 @@ get_plateThreshold <- function(tdrn_long){
 }
 
 ##### analyze_sample
-analyze_sample <- function(tdrn_sample, probes){
+analyze_sample <- function(tdrn_sample, probes, threshold){
   #takes a filtered tdrn for a single sample
+  #and a plate threshold
   #returns a data frame with Ct for each probe
   #returns Inf if value never crosses threshold
   
@@ -228,7 +229,8 @@ analyze_sample <- function(tdrn_sample, probes){
         #extract threshold
         
         
-        the_threshold <- get_threshold.rg(the_curve)
+        #the_threshold <- get_threshold.rg(the_curve)
+        the_threshold = threshold
         #the_threshold <- 725
         #print(the_threshold)
         #does the curve crosses the threshold?
@@ -255,7 +257,6 @@ plate_qc <- function(tdrn, all_probes){
   #analyzes quality control 
   #returns a list with qc table and qc results
   
-  
   #extracts quality control wells
   wells.ntc <- grep(pattern = "_NTC", x = colnames(tdrn))
   wells.ptc <- grep(pattern = "_PTC", x = colnames(tdrn))
@@ -266,6 +267,9 @@ plate_qc <- function(tdrn, all_probes){
     select(c(wells.ntc, wells.ptc, wells.exc), cycles) %>% 
     pivot_deltaRN %>% 
     split_longtdrn
+  
+  #get threshold
+  my_threshold <- get_plateThreshold(pivot_deltaRN(tdrn))
   
   
   #name for iteration
@@ -281,7 +285,9 @@ plate_qc <- function(tdrn, all_probes){
         filter(sample.label == my_sample) 
       
       #we evaluate all probes
-      analyze_sample(tdrn_sample = sample_data, probes = all_probes)
+      analyze_sample(tdrn_sample = sample_data, 
+                     probes = all_probes, 
+                     threshold = my_threshold)
       
     })%>% bind_rows(.id = "sample")  
   
@@ -363,6 +369,9 @@ test.plate <- function(tdrn, probes){
   test.samples <- unique(test.df$sample.label)
   names(test.samples) <- test.samples
   
+  #get threshold
+  my_threshold <- get_plateThreshold(pivot_deltaRN(tdrn))
+  
   #analyze tests
   test.results <- 
     lapply(test.samples, FUN = function(my_sample){
@@ -372,7 +381,9 @@ test.plate <- function(tdrn, probes){
         filter(sample.label == my_sample) 
       
       #we evaluate all probes
-      analyze_sample(tdrn_sample = sample_data, probes = probes)
+      analyze_sample(tdrn_sample = sample_data, 
+                     probes = probes, 
+                     threshold = my_threshold)
       
     })%>% bind_rows(.id = "sample")
   
