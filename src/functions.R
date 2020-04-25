@@ -171,13 +171,13 @@ get_threshold.rg <- function(curve){
   
   mean.ini <- 
   curve %>% 
-    filter(cycles%in%3:10) %>% 
+    filter(cycles%in%3:15) %>% 
     pull(value) %>% 
     mean
   
   sd.ini <- 
     curve %>% 
-    filter(cycles%in%3:10) %>% 
+    filter(cycles%in%3:15) %>% 
     pull(value) %>% 
     sd
   
@@ -198,13 +198,13 @@ get_plateThreshold <- function(tdrn_long){
   
   mean.ini <- 
     tdrn_long %>% 
-    filter(cycles%in%3:10) %>% 
+    filter(cycles%in%3:15) %>% 
     pull(value) %>% 
     mean
   
   sd.ini <- 
     tdrn_long %>% 
-    filter(cycles%in%3:10) %>% 
+    filter(cycles%in%3:15) %>% 
     pull(value) %>% 
     sd
   
