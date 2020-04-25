@@ -261,6 +261,7 @@ plate_qc <- function(tdrn, all_probes){
   wells.ntc <- grep(pattern = "_NTC", x = colnames(tdrn))
   wells.ptc <- grep(pattern = "_PTC", x = colnames(tdrn))
   wells.exc <- grep(pattern = "_EC", x = colnames(tdrn))
+  print(length(wells.exc))
   ##and filter the tdrn
   qc.df <-
     tdrn %>% 
@@ -314,6 +315,8 @@ plate_qc <- function(tdrn, all_probes){
   
   #check that all probes for EC DO NOT cross threshold; same as NTC
   
+  if(length(wells.exc)==0){
+    ec.all <- "not_run"}else{
   ec.all <-
     qc.results %>%
     filter(grepl(pattern = "EC", x = sample)) %>%
@@ -321,6 +324,7 @@ plate_qc <- function(tdrn, all_probes){
     select(-sample) %>%
     map_dfr(.f = function(i){all(i==Inf)}) %>% #all probes dont cross threshold
     unlist %>% all(. == T) #this should be all true
+    }
   
   ptc.all <-
     list(RP = all(ptc.all[["RP"]]>=35), #this should be T, do not amplify
@@ -329,7 +333,13 @@ plate_qc <- function(tdrn, all_probes){
          ) %>% 
     unlist %>% all(. == T) #this should be all true
   
-  qc.assess <- ifelse(ntc.all & ptc.all & ec.all, "PASS", "FAIL")
+  
+  if(length(wells.exc)==0){
+    qc.assess <- ifelse(ntc.all & ptc.all, "PASS", "FAIL")
+  }else{
+  qc.assess <- ifelse(ntc.all & ptc.all & ec.all, "PASS", "FAIL")  
+  }
+  
   
   result_final <- list(qc.values = qc.results,
                        ntc.pass = ntc.all,
@@ -339,7 +349,7 @@ plate_qc <- function(tdrn, all_probes){
   
   if(!ntc.all){print("NTC failed")}
   if(!ptc.all){print("PTC failed")}
-  if(!ec.all){print("EX failed")}
+  if(is.logical(ec.all) && !ec.all){print("EX failed")}
   
   return(result_final)
 
