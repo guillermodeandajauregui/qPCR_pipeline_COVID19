@@ -58,25 +58,25 @@ make_reports <- function(result_table, # data with columns like simulated data
                          id_client, # Internal ID of the requesting institution
                          outdir, # The report output directory will be defined either by the user or by the DDT
                          by_sample = FALSE){
-    # Select conclusive data for specific petitioner institution
+    # Select conclusive data for specific claimant institution
     the_samples <- which(result_table$id_client %in% id_client 
     & result_table$qc == "PASS" 
     & (result_table$classification == "positive" 
       | result_table$classification == "negative"))
-  # make reports by petitioner institution with those samples that both your plate has passed 
-  # the controls and its diagnosis is conclusive
   if(by_sample == FALSE){
-    # select specific columns 
-    my_r <- as.matrix(result_table[the_samples, c(3, 4, 11:14)])
+  # make reports by claimant institution with those samples that both your plate has passed 
+  # the controls and its diagnosis is conclusive
+    my_r <- as.matrix(result_table[the_samples, c(3, 4, 11:14)])  # select specific columns 
     my_r[my_r == "Inf"] <- "45+"
     client <- unique(result_table$client[the_samples])
+    client_file gsub("[^[:alnum:]]", "_", client) # Name of the claimant institution safe for file name
     n_samples <- length(rownames(my_r))
     rownames(my_r) <- sub('(^[0-9]$)','0\\1', 1:n_samples)
-    outpath <- paste0(outdir, "/", Sys.Date(), "_", the_client_is, ".pdf") 
+    outpath <- paste0(outdir, "/", Sys.Date(), "_", client_file, ".pdf") 
     render("report.Rmd",output_file = outpath)
+  }else{
   # make reports by patient with those samples that both your plate has passed the controls and its
   # diagnosis is conclusive
-  }else{
     lapply(seq_along(result_table$sample[the_samples]), function(i){
       client <- result_table$client[the_samples][i]
       idsamplesclient <- result_table$id_samples_client[the_samples][i]
