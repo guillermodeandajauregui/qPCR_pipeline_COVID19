@@ -1,0 +1,38 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+    fig_caption: yes
+    latex_engine: pdflatex
+    template: latexSampleTemplate.tex
+geometry: margin=0.7in
+papersize: letterpaper
+
+report: true
+date: "`r Sys.time()`"
+author: "Dr. Gecko" # Podría ser sustituido por usuario que imprime
+id: "`r client`"
+idsamplesclient: "`r idsamplesclient`"
+patient: "`r patient_name`"
+diagnosis : "`r diagnosis`"
+
+
+email: "dr.gecko@inmegen.gob.mx"
+web: "www.inmegen.gob.mx"
+
+fontfamily: fontenc
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+graphics: true
+width: 1
+logoposition: center
+logo: Inmegenlogosalud.pdf
+---
+
+
+```{r echo=F, warning=F, results='asis'}
+
+library(knitr)
+kable(r_results, col.names = c("Sonda", "Ct"), align = "lc")
+```
