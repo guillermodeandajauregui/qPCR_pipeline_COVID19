@@ -11,6 +11,10 @@ library(shiny)
 library(shinythemes)
 library(shinyFiles)
 library(DT)
+library(shinyauthr)
+library(shinyjs)
+library(sodium)
+
 
 
 source("function_app_qPCR_cdc.R")
@@ -19,6 +23,21 @@ source("src/functions.R")
 
 #input <- c("data/Procolo_COVID-19_Prueba1_4Abr20.eds")
 #output <- c("results/")
+
+# dataframe that holds usernames, passwords and other user data
+user_base <- data_frame(
+  user = c("lgomez", "efernandez", "memorales", "aivalencia", "dgutierrez"),
+  password = c("admin1234", "covid-inmegen-ez", "covid-inmegen-ms", "covid-inmegen-aa", "covid-inmegen-dz"), 
+  password_hash = sapply(c("admin1234","covid-inmegen-ez", "covid-inmegen-ms", "covid-inmegen-aa", "covid-inmegen-dz"), sodium::password_store), 
+  permissions = c("admin", "standard", "standard", "standard", "standard" ),
+  name = c("Admin", "One", "Two", "Three", "Four")
+)
+
+saveRDS(user_base, "user_base.rds")
+
+
+sidebar <- sidebarPanel(uiOutput("sidebarpanel"))
+
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -35,43 +54,18 @@ ui <- fluidPage(
   hr(),
   
   ###### SIDE BAR - CONTROLADOR DE ACCIONES
-  sidebarPanel(
-    ######## SELECT ONE GENE TO PLOT
-    selectInput("protocol", "Selecciona un protocolo",
-                choices = as.list(c("CDC", "Berlin")), selected = 1),
-    hr(),
-    
-    ######## h2("Selecciona el archivo a procesar"),
-    #fileInput("rtpcr", "Sube el archivo a procesar"),
-    h5('Selecciona el archivo a procesar'),
-    shinyFilesButton('file', 'Archivo a procesar', 'Selecciona el archivo a procesar', FALSE),
-    hr(),
-    
-    ######## h2("Selecciona el directorio para los resultados"),
-    h5('Selecciona el directorio para almacenar los resultados'),
-    shinyDirButton('directory', 'Directorio de resultados', 'Selecciona el directorio para almacenar los resultados'),
-    #shinyDirChoose(input, 'out_dir', roots = c(home = '~')),
-    #fileInput("dir_out", "Selecciona el directorio para almacenar los resultados"),
-    hr(),
-    
-    ######## BUTTON TO GENERATE SUMMARY TABLE
-    h5('Presiona para analizar los datos de la corrida'),
-    actionButton("analizar", "Analizar corrida"),
-    hr(),
-    
-    ######## BUTTON TO PRINT PLOTS TO WEB
-    #h5('Presiona para imprimir las curvas control en la interfaz web'),
-    #actionButton("plot", "Imprimir curvas control en Web"),
-    #hr(),
-    
-    ######## BUTTON TO GENERATE PLATE CONFIGURATION TABLE
-    h5('Presiona para generar el reporte de la placa'),
-    actionButton("plate", "Reporte placa")
-
-  ),
-  
+  sidebar,
   ###### DISE??O DEL PANEL PARA IMPRESION DE RESULTADOS
   mainPanel(
+    
+    shinyjs::useShinyjs(),
+    # add logout button UI 
+    div(class = "pull-right", logoutUI(id = "logout")),
+    # add login panel UI function
+    loginUI(id = "login"),
+    
+    hr(),
+    hr(),
     
     tabsetPanel(
       id = "navbar",
@@ -140,6 +134,54 @@ ui <- fluidPage(
 ###### SERVIDOR
 server <- function(input, output, session) {
   
+  credentials <- callModule(shinyauthr::login, "login", 
+                            data = user_base,
+                            user_col = user,
+                            pwd_col = password_hash,
+                            sodium_hashed = TRUE,
+                            log_out = reactive(logout_init()))
+  
+  logout_init <- callModule(shinyauthr::logout, "logout", reactive(credentials()$user_auth))
+  
+  output$sidebarpanel <- renderUI({
+    if(credentials()$user_auth) { 
+      fluidPage( 
+        sidebarPanel(
+      ######## SELECT ONE GENE TO PLOT
+      selectInput("protocol", "Selecciona un protocolo",
+                  choices = as.list(c("CDC", "Berlin")), selected = 1),
+      hr(),
+      
+      ######## h2("Selecciona el archivo a procesar"),
+      #fileInput("rtpcr", "Sube el archivo a procesar"),
+      h5('Selecciona el archivo a procesar'),
+      shinyFilesButton('file', 'Archivo a procesar', 'Selecciona el archivo a procesar', FALSE),
+      hr(),
+      
+      ######## h2("Selecciona el directorio para los resultados"),
+      h5('Selecciona el directorio para almacenar los resultados'),
+      shinyDirButton('directory', 'Directorio de resultados', 'Selecciona el directorio para almacenar los resultados'),
+      #shinyDirChoose(input, 'out_dir', roots = c(home = '~')),
+      #fileInput("dir_out", "Selecciona el directorio para almacenar los resultados"),
+      hr(),
+      
+      ######## BUTTON TO GENERATE SUMMARY TABLE
+      h5('Presiona para analizar los datos de la corrida'),
+      actionButton("analizar", "Analizar corrida"),
+      hr(),
+      
+      ######## BUTTON TO PRINT PLOTS TO WEB
+      #h5('Presiona para imprimir las curvas control en la interfaz web'),
+      #actionButton("plot", "Imprimir curvas control en Web"),
+      #hr(),
+      
+      ######## BUTTON TO GENERATE PLATE CONFIGURATION TABLE
+      h5('Presiona para generar el reporte de la placa'),
+      actionButton("plate", "Reporte placa"),
+      width = 12
+    ))
+    }
+  })
   ####### LEER EL PROTOCOLO A UTILIZAR
   protocol <- reactive({
     protocol <- input$protocol
