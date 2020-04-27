@@ -1,0 +1,5 @@
+"sample","ntc.pass","ptc.pass","ec.pass","qc","RP","N1","N2","classification"
+"INM01",TRUE,FALSE,TRUE,"FAIL",28,28,28,"positive"
+"INM02",TRUE,FALSE,TRUE,"FAIL",24,Inf,Inf,"negative"
+"INM03",TRUE,FALSE,TRUE,"FAIL",24,Inf,24,"inconclusive"
+"INM04",TRUE,FALSE,TRUE,"FAIL",Inf,24,24,"invalid"

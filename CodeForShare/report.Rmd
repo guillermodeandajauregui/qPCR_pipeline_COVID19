@@ -1,0 +1,39 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+    fig_caption: yes
+    latex_engine: pdflatex
+    template: latexReportTemplate.tex
+geometry: margin=0.7in
+papersize: letterpaper
+
+
+report: true
+date: "`r Sys.time()`"
+author: "Dr. Gecko" # Podría ser sustituido por usuario que imprime
+id: "`r client`"
+nsamples: "`r as.character(n_samples)`"
+
+email: "dr.gecko@inmegen.gob.mx"
+web: "www.inmegen.gob.mx"
+
+
+fontfamily: fontenc
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+graphics: true
+width: 1
+logoposition: center
+logo: Inmegenlogosalud.pdf
+---
+
+A continuación se presentan los resultados de los estudios concluyentes de los siguientes pacientes.
+
+```{r echo=F, warning=F, results='asis'}
+
+library(knitr)
+kable(my_r, col.names = c("ID", "Nombre del paciente", "RP Ct", "N1 Ct", "N2 Ct", "Diagnóstico"), align = "llcccr")
+```
+

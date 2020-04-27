@@ -97,6 +97,15 @@ make_reports(plot_list = triplets.qc,
 
 test_diagnosis <- cdc_classification(test.results)
 
+test_diagnosis <- 
+data.frame(ntc.pass = qc_results$ntc.pass, 
+           ptc.pass = qc_results$ptc.pass, 
+           ec.pass = qc_results$ec.pass,
+           qc      = qc_results$QC,
+           test_diagnosis 
+) %>% as.tbl() %>% select(sample, everything())
+
+
 ################################################################################
 #Write QC output
 ################################################################################
