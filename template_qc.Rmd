@@ -34,11 +34,13 @@ logo: theme/Inmegenlogosalud.pdf
 
 library(knitr)
 kable(my_r)
-```
+```  
+
+\scriptsize `r if(!("EC" %in% result_table$sample)){"* En esta placa no se añadió control de extracción (EC). Revisar la placa 4 consecutiva."}`  \par  
 
 ##### NTC
 
-```{r, echo = F, results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=5.7, fig.align='center'}
+```{r, echo = F, results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=5.5, fig.align='center'}
 
 plot_list[ntc]
 
