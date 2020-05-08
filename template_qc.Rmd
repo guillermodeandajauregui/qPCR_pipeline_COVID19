@@ -54,7 +54,6 @@ plot_list[ntc]
 plot_list[ptc]
 
 ```
-\pagebreak
 
 ##### EC
 
