@@ -26,11 +26,11 @@ source("src/functions.R")
 
 # dataframe that holds usernames, passwords and other user data
 user_base <- data_frame(
-  user = c("lgomez", "efernandez", "memorales", "aivalencia", "dgutierrez"),
-  password = c("admin1234", "covid-inmegen-ez", "covid-inmegen-ms", "covid-inmegen-aa", "covid-inmegen-dz"), 
-  password_hash = sapply(c("admin1234","covid-inmegen-ez", "covid-inmegen-ms", "covid-inmegen-aa", "covid-inmegen-dz"), sodium::password_store), 
-  permissions = c("admin", "standard", "standard", "standard", "standard" ),
-  name = c("Admin", "One", "Two", "Three", "Four")
+  user = c("lgomez", "efernandez", "memorales", "aivalencia", "dgutierrez", "cfresno"),
+  password = c("admin1234", "covid-inmegen-ez", "covid-inmegen-ms", "covid-inmegen-aa", "covid-inmegen-dz", "admin-system"), 
+  password_hash = sapply(c("admin1234","covid-inmegen-ez", "covid-inmegen-ms", "covid-inmegen-aa", "covid-inmegen-dz", "admin-system"), sodium::password_store), 
+  permissions = c("admin", "standard", "standard", "standard", "standard","standard"),
+  name = c("Admin", "One", "Two", "Three", "Four", "Five")
 )
 
 saveRDS(user_base, "user_base.rds")
@@ -290,13 +290,19 @@ server <- function(input, output, session) {
   
   output$caption3 <- renderText({
     table_out()
-    names(table_out()$triplets.qc)[3]
+    text <- "ESTA PLACA NO CONTIENE EL CONTROL EC. REVISAR LA PLACA 4 CONSECUTIVA."
+    if (length(names(table_out()$triplets.qc)) == 3){
+      text <- names(table_out()$triplets.qc)[3]
+    }
+    text
   })
   
   output$plot3 <- renderPlot({
     table_out()
     plots <- table_out()$triplets.qc
-    (plots[[3]] + ggtitle(labels(plots)[3]))
+    if (length(plots) == 3){
+      (plots[[3]] + ggtitle(labels(plots)[3]))
+    }
   })
   
   
