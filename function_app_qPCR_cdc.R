@@ -77,12 +77,12 @@ triplets.samples <- triplets(plots.samples)
 #Write individual reports
 ################################################################################
 
-# make_reports(plot_list = triplets.samples, 
-#              result_table = qc_results$qc.values, 
-#              input = input,
-#              outdir = output, 
-#              qc_results = qc_results$QC,
-#              qc = F)
+make_reports(plot_list = triplets.samples, 
+             result_table = qc_results$qc.values, 
+             input = input,
+             outdir = output, 
+             qc_results = qc_results$QC,
+             qc = F)
 
 make_reports(plot_list = triplets.qc, 
              result_table = qc_results$qc.values, 

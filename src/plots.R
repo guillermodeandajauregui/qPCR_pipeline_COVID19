@@ -147,7 +147,7 @@ make_reports <- function(plot_list,
     
     outpath <- paste0(outdir, "/", Sys.Date(), "_", my_name, ".pdf")
     outpath_inf <- paste0(outdir, "/", Sys.Date(), "_", my_name, "_results.pdf")
-    render("template_inf.Rmd", output_file = outpath_inf)
+    # render("template_inf.Rmd", output_file = outpath_inf)
     render("template.Rmd",output_file = outpath)})
   }else{
   	my_r <- as.matrix(result_table)

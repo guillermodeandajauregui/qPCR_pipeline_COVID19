@@ -4,7 +4,7 @@ output:
     keep_tex: false
     fig_caption: yes
     latex_engine: pdflatex
-    template: theme/latexTemplate.tex
+    template: theme/latexTemplate_qc.tex
 geometry: margin=0.7in
 papersize: letterpaper
 
@@ -15,7 +15,7 @@ date: "`r Sys.time()`"
 
 id: "`r plate`"
 controls: "`r qcplate`"
-
+ncontrols: "`r length(result_table$sample)`"
 
 email: "dr.gecko@inmegen.gob.mx"
 web: "www.inmegen.gob.mx"

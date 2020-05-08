@@ -16,6 +16,7 @@ date: "`r Sys.time()`"
 id: "`r the_sample_is`"
 controls: "`r qcplate`"
 
+institution: "`r strsplit(the_sample_is,split = '-')[[1]][3]`"
 
 email: "dr.gecko@inmegen.gob.mx"
 web: "www.inmegen.gob.mx"
