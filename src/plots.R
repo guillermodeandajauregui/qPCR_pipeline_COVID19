@@ -131,6 +131,7 @@ make_reports <- function(plot_list,
                          outdir, 
                          qc_results,
                          qc = F){
+  plate <- stringr::str_remove(string = basename(input), pattern = ".eds")
   qcplate <- ifelse(qc_results == "PASS", "true", "")
   #makes reports from a list of plots and some result table
   if(qc==F){
@@ -155,7 +156,6 @@ make_reports <- function(plot_list,
     ntc <- grep(pattern = "NTC", x = names(plot_list))
 	ptc <- grep(pattern = "PTC", x = names(plot_list))
  	exc <- grep(pattern = "EC", x = names(plot_list))
-    plate <- stringr::str_remove(string = basename(input), pattern = ".eds")
     outpath <- paste0(outdir, "/", Sys.Date(), "_", plate, ".pdf")
     render("template_qc.Rmd",output_file = outpath)
   }

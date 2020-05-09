@@ -13,7 +13,7 @@ report: true
 author: "Grupo de Gen??mica Computacional, INMEGEN"
 date: "`r Sys.time()`"
 
-id: "`r plate`"
+plate: "`r plate`"
 controls: "`r qcplate`"
 ncontrols: "`r length(result_table$sample)`"
 
