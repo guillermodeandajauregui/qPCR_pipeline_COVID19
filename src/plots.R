@@ -49,7 +49,7 @@ plot_deltaRN.long <- function(tdrn_long,
 
 
 ##### plot.curves
-plot.curves <- function(tdrn, probes, qc = TRUE){
+plot.curves <- function(tdrn, probes, threshold, qc = TRUE){
   #takes an tdrn file
   #makes plots for either qc wells
   #or non-qc wells
@@ -94,7 +94,8 @@ plot.curves <- function(tdrn, probes, qc = TRUE){
         
         color <- ifelse(unique(the_curve$probe) == "RP", "#e41a1c", ifelse(unique(the_curve$probe) == "N1", "#377eb8", "#4daf4a"))
         
-        the_threshold <- get_threshold.rg(the_curve)
+        #the_threshold <- get_threshold.rg(the_curve)
+        the_threshold <- threshold
         
         p <- 
           plot_deltaRN.long(tdrn_long = the_curve) + 
