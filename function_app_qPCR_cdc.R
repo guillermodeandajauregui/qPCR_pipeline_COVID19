@@ -61,12 +61,16 @@ test.results <- test.plate(tdrn = my_deltaRN, probes = cdc_probes)
 #Plot preparation
 ################################################################################
 
+threshold = get_plateThreshold(pivot_deltaRN(my_deltaRN))
+
 plots.qc <- plot.curves(tdrn = my_deltaRN, 
                         probes = cdc_probes, 
+                        threshold = threshold,
                         qc = T)
 
 plots.samples <- plot.curves(tdrn = my_deltaRN, 
                              probes = cdc_probes, 
+                             threshold = threshold,
                              qc = F)
 
 triplets.qc <- triplets(plots.qc)
@@ -117,7 +121,7 @@ write_delim(x = qc_results$qc.values, path = out_path_qc)
 ################################################################################
 
 out_path_results = paste0(output, "test.results.txt", collapse="/")
-write_delim(x = test_diagnosis, path = out_path_results)
+write_delim(x = test.results, path = out_path_results)
 ################################################################################
 #Done
 ################################################################################
