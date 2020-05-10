@@ -397,8 +397,6 @@ plate_qc <- function(tdrn, all_probes){
 
 }
 
-plate_qc(tdrn = my_deltaRN, all_probes = cdc_probes)
-
 ##### test.plate
 
 test.plate <- function(tdrn, probes){
@@ -426,7 +424,7 @@ test.plate <- function(tdrn, probes){
   #get threshold
   my_threshold <- get_plateThreshold(pivot_deltaRN(tdrn))
   
-  threshold_list = lapply(X = all_probes, FUN = function(i){
+  threshold_list = lapply(X = probes, FUN = function(i){
     get_probeThreshold(tdrn_long = split_longtdrn(pivot_deltaRN(tdrn)), 
                        my_probe = i)
   })
