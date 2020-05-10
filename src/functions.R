@@ -213,6 +213,41 @@ get_plateThreshold <- function(tdrn_long){
   
 }
 
+
+
+
+
+##### get_probeThreshold
+
+get_probeThreshold <- function(tdrn_long, my_probe){
+  #sets the baseline as the average value of all wells with that probe 
+  #in the initial times
+  #based on 
+  #Quant Studio 6 and 7 user manual
+  #calculates the mean and standard deviation (SD) of the signal in the cycles 
+  #3-10 and places the threshold at mean+10*SD 
+  
+  mean.ini <- 
+    tdrn_long %>% 
+    filter(probe == my_probe) %>% 
+    filter(cycles%in%3:15) %>% 
+    pull(value) %>% 
+    mean
+  
+  
+  sd.ini <- 
+    tdrn_long %>% 
+    filter(probe == my_probe) %>% 
+    filter(cycles%in%3:15) %>% 
+    pull(value) %>% 
+    sd
+  
+  my_threshold <- mean.ini + (10 * sd.ini)
+  return(my_threshold)
+  
+}
+
+
 ##### analyze_sample
 analyze_sample <- function(tdrn_sample, probes, threshold){
   #takes a filtered tdrn for a single sample
