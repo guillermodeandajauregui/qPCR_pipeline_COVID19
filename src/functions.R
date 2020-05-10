@@ -249,7 +249,7 @@ get_probeThreshold <- function(tdrn_long, my_probe){
 
 
 ##### analyze_sample
-analyze_sample <- function(tdrn_sample, probes, threshold){
+analyze_sample <- function(tdrn_sample, probes, threshold_list){
   #takes a filtered tdrn for a single sample
   #and a plate threshold
   #returns a data frame with Ct for each probe
@@ -265,7 +265,7 @@ analyze_sample <- function(tdrn_sample, probes, threshold){
         
         
         #the_threshold <- get_threshold.rg(the_curve)
-        the_threshold = threshold
+        the_threshold = threshold_list[[my_probe]]
         #the_threshold <- 725
         #print(the_threshold)
         #does the curve crosses the threshold?
@@ -307,6 +307,12 @@ plate_qc <- function(tdrn, all_probes){
   #get threshold
   my_threshold <- get_plateThreshold(pivot_deltaRN(tdrn))
   
+   threshold_list = lapply(X = all_probes, FUN = function(i){
+     get_probeThreshold(tdrn_long = split_longtdrn(pivot_deltaRN(tdrn)), 
+                        my_probe = i)
+   })
+  # 
+  
   
   #name for iteration
   qc.samples <- unique(qc.df$sample.label)
@@ -320,10 +326,11 @@ plate_qc <- function(tdrn, all_probes){
         qc.df %>% 
         filter(sample.label == my_sample) 
       
+      
       #we evaluate all probes
       analyze_sample(tdrn_sample = sample_data, 
                      probes = all_probes, 
-                     threshold = my_threshold)
+                     threshold_list = threshold_list)
       
     })%>% bind_rows(.id = "sample")  
   
@@ -390,6 +397,8 @@ plate_qc <- function(tdrn, all_probes){
 
 }
 
+plate_qc(tdrn = my_deltaRN, all_probes = cdc_probes)
+
 ##### test.plate
 
 test.plate <- function(tdrn, probes){
@@ -416,6 +425,12 @@ test.plate <- function(tdrn, probes){
   
   #get threshold
   my_threshold <- get_plateThreshold(pivot_deltaRN(tdrn))
+  
+  threshold_list = lapply(X = all_probes, FUN = function(i){
+    get_probeThreshold(tdrn_long = split_longtdrn(pivot_deltaRN(tdrn)), 
+                       my_probe = i)
+  })
+  # 
   
   #analyze tests
   test.results <- 
