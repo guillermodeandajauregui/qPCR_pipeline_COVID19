@@ -55,7 +55,11 @@ plot_list[ptc]
 
 ```
 
-##### EC
+```{r pagebreak, echo = F, results='hide', results='asis', eval="EC" %in% result_table$sample}
+cat("\\pagebreak")
+cat("##### EC")
+```
+
 
 ```{r, echo = F,  results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
 
