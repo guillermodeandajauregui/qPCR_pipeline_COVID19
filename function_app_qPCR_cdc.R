@@ -61,16 +61,20 @@ test.results <- test.plate(tdrn = my_deltaRN, probes = cdc_probes)
 #Plot preparation
 ################################################################################
 
-threshold = get_plateThreshold(pivot_deltaRN(my_deltaRN))
+threshold_list = lapply(X = cdc_probes, 
+                        FUN = function(i){
+  get_probeThreshold(tdrn_long = split_longtdrn(pivot_deltaRN(my_deltaRN)), 
+                     my_probe = i)
+})
 
 plots.qc <- plot.curves(tdrn = my_deltaRN, 
                         probes = cdc_probes, 
-                        threshold = threshold,
+                        threshold_list = threshold_list,
                         qc = T)
 
 plots.samples <- plot.curves(tdrn = my_deltaRN, 
                              probes = cdc_probes, 
-                             threshold = threshold,
+                             threshold_list = threshold_list,
                              qc = F)
 
 triplets.qc <- triplets(plots.qc)
