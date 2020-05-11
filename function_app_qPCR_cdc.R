@@ -125,7 +125,7 @@ write_delim(x = qc_results$qc.values, path = out_path_qc)
 ################################################################################
 
 out_path_results = paste0(output, "test.results.txt", collapse="/")
-write_delim(x = test.results, path = out_path_results)
+write_delim(x = test_diagnosis, path = out_path_results)
 ################################################################################
 #Done
 ################################################################################

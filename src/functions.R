@@ -441,7 +441,7 @@ test.plate <- function(tdrn, probes){
       #we evaluate all probes
       analyze_sample(tdrn_sample = sample_data, 
                      probes = probes, 
-                     threshold = my_threshold)
+                     threshold_list = threshold_list)
       
     })%>% bind_rows(.id = "sample")
   
