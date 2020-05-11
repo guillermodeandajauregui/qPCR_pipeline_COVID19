@@ -117,8 +117,8 @@ triplets <- function(curve.list){
 		hjust = 1)
 	})
 	triplets <- lapply(seq_along(triplet), function(i){
-	annotate_figure(triplet[[i]], bottom = text_grob("Cycles", size = 10, hjust = 1),
-                left = text_grob("Delta RN", size = 10, rot = 90))
+	annotate_figure(triplet[[i]], bottom = text_grob("Cycle", size = 10, hjust = 1),
+                left = text_grob(bquote(Delta*"Rn"), size = 10, rot = 90))
 	})
 	names(triplets) <- names(curve.list)
 	return(triplets)
