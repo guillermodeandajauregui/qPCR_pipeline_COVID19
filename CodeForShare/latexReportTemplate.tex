@@ -33,7 +33,7 @@ $endif$
 
 \usepackage[$if(fontenc)$$fontenc$$else$T1$endif$]{fontenc}
 \usepackage[utf8]{inputenc}
-
+\usepackage[spanish]{babel}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage{lastpage}
@@ -143,17 +143,8 @@ $if(graphics)$
 \usepackage[export]{adjustbox}
 $endif$
 
-$if(title)$
-\title{$title$$if(thanks)$\thanks{$thanks$}$endif$}
-$endif$
-$if(subtitle)$
-\providecommand{\subtitle}[1]{}
-\subtitle{$subtitle$}
-$endif$
-$if(author)$
-\author{$for(author)$$author$$sep$ \and $endfor$}
-$endif$
-\date{$date$}
+
+\usepackage{float}
 
 \begin{document}  
 
@@ -163,52 +154,76 @@ $endif$
 $if(graphics)$$if(logo)$\Oldincludegraphics[width=$if(width)$$width$$else$0.3$endif$\textwidth, $if(logoposition)$$logoposition$$else$right$endif$]{$logo$}$else$$endif$$endif$
 
 
-$if(report)$
 \begin{center} 
 {\fontfamily{cmss}\selectfont
-\huge \bfseries{\scshape{SARS-CoV-2}}\\
-\normalsize \bfseries{\scshape{qPCR Report}}
+\Large \bfseries{\scshape{Unidad de Secuenciación del Instituto Nacional de Medicina Genómica}}
 }
 \end{center}
-$endif$
 
+\begin{flushright} 
+Ciudad de México a \today
+\end{flushright}
+
+\begin{center} 
+{\fontfamily{cmss}\selectfont
+\large \bfseries{\scshape{Reporte Técnico de Laboratorio}}\\
+}
+\end{center}
+\hrule
 \vspace{2mm}
 
-{\fontfamily{cmss}\selectfont
-	\noindent \begin{tabular*}{\textwidth}{ @{\extracolsep{\fill}} lr @{\extracolsep{\fill}}}
+Estimado Dr(a): $if(receiber)$\texttt{$receiber$}$else$A quien corresponda$endif$
 
 
-Solicitante: $if(id)$\texttt{$id$}$else$TBD$endif$ & Fecha: $if(date)$\texttt{$date$}$else$TBD$endif$\\
- Generó reporte: $if(author)$\texttt{$author$}$else$TBD$endif$ & Número de pacientes: $if(nsamples)$\texttt{$nsamples$}$else$TBD$endif$ \\
-	\hline
-	\end{tabular*}
-}	
-\vspace{1mm}
-	
+Encuentre a continuación el reporte de las muestras entregadas por su institución:\\
+
+Número de muestras entregadas: $if(allsamples)$\texttt{$allsamples$}$else$TBD$endif$\\
+Número de muestras procesadas: $if(nsamples)$\texttt{$nsamples$}$else$TBD$endif$\\
+Fecha de toma de muestra: $if(sampling)$\texttt{$sampling$}$else$TBD$endif$\\
+Fecha de procesamiento de las muestras: $if(processingdate)$\texttt{$processingdate$}$else$TBD$endif$\\
+Institución solicitante: $if(id)$\texttt{$id$}$else$TBD$endif$\\  
+
+\medskip
+
+\textbf{Resumen de resultados:}
+
+\medskip
 
 
+Se procesaron las muestras de $if(method)$\texttt{$method$}$else$TBD$endif$, descritas en la(s) tabla(s) adjunta (s), para la detección de material genético del SARS-CoV-2 (COVID-19) utilizando dos sondas (N1, N2) específicas para la detección de la nucleocápside del virus y utilizando la técnica de reacción en cadena de la polimerasa con retrotranscriptasa reversa en tiempo real (qRT-PCR).\\
+
+\medskip
+
+Encontrará los resultados en la tabla(s) adjunta (s) a este documento.\\
+
+\smallskip
+
+Le enviamos un cordial saludo y estamos atentos a sus dudas y/o comentarios.\\
+
+\medskip
+
+\vspace*{\fill}
+\begin{center}
+A T E N T A M E N T E
+\end{center}
+\vspace{2cm}
+\begin{tabular}{c p{2cm} c}
+~ & ~ & ~ \\
+~ & ~ & ~ \\
+\cmidrule(r){1-1}\cmidrule(l){3-3}
+M. en C. Alfredo Mendoza Vargas & ~ & Dr. Juan Pablo Reyes Grajeda \\
+Responsable del Área Operativa & ~ & Subdirector de Desarrollo de Aplicaciones Clínicas\\
+Tel. 55 5350 1972 & ~ & Responsable Sanitario ante COFEPRIS\\
+mail: amendoza@inmegen.gob.mx & ~ & Tel. 55 5350 1900 ext. 1192\\
+~ & ~ & mail: jreyes@inmegen.gob.mx \\
+\end{tabular}
+
+\newpage
 
 $body$
 
 
-
 \vspace*{\fill}
-{\fontfamily{cmss}\selectfont
-\noindent \begin{tabular*}{\textwidth}{ @{\extracolsep{\fill}} lr @{\extracolsep{\fill}}}
-\hline
-E-mail: $if(email)$\texttt{$email$}$else$TBD$endif$ & Web: $if(web)$\href{http://$web$}{\tt $web$}$else$TBD$endif$  \end{tabular*}
-}
-
+Las muestras \textbf{no} fueron tomadas por el INMEGEN. Fueron procesadas por el personal $brigada$ y validados por el(los) analista(s) $analista$.
 \end{document}
 
-\makeatletter
-\def\@maketitle{%
-  \newpage
-%  \null
-%  \vskip 2em%
-%  \begin{center}%
-  \let \footnote \thanks
-    {\fontsize{18}{20}\selectfont\raggedright  \setlength{\parindent}{0pt} \@title \par}%
-}
-%\fi
-\makeatother

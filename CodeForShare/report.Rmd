@@ -7,18 +7,16 @@ output:
     template: latexReportTemplate.tex
 geometry: margin=0.7in
 papersize: letterpaper
-
-
-report: true
-date: "`r Sys.time()`"
-author: "Dr. Gecko" # Podría ser sustituido por usuario que imprime
+date: "`r Sys.Date()`"
+receiber: "Dr. X"
 id: "`r client`"
+analista: "Alfredo Mendoza"
+brigada: "A1"
 nsamples: "`r as.character(n_samples)`"
-
-email: "dr.gecko@inmegen.gob.mx"
-web: "www.inmegen.gob.mx"
-
-
+allsamples: "`r as.character(allsamples)`"
+sampling: 
+processingdate: "`r processingdate`"
+method: 
 fontfamily: fontenc
 fontsize: 11pt
 header-includes:
@@ -26,14 +24,12 @@ header-includes:
 graphics: true
 width: 1
 logoposition: center
-logo: Inmegenlogosalud.pdf
+logo: inmegenlogosalud.pdf
 ---
-
-A continuación se presentan los resultados de los estudios concluyentes de los siguientes pacientes.
 
 ```{r echo=F, warning=F, results='asis'}
 
 library(knitr)
-kable(my_r, col.names = c("ID", "Nombre del paciente", "RP Ct", "N1 Ct", "N2 Ct", "Diagnóstico"), align = "llcccr")
+library(kableExtra)
+kable(my_r, row.names = FALSE, col.names = c("Número consecutivo","ID INMEGEN", "ID Institución", "Institución", "Nombre de paciente/proyecto", "Tipo de muestra", "Resultado"), align = "llcccr", format="latex", booktabs=TRUE, escape = FALSE) %>% kable_styling(latex_options = c("striped", "scale_down"), fixed_thead = TRUE)
 ```
-
