@@ -88,7 +88,7 @@ make_reports <- function(result_table, # data with columns like simulated data
                          outdir, # The report output directory will be defined either by the user or by the DDT
                          report = TRUE){
       if(report == TRUE){
-        lapply(split(result_table,result_table$id_client), reportSamples, result_table = result_table, outdir = outdir)
+        lapply(split(result_table,result_table$id_client), reportSamples, outdir = outdir)
       }else{
   # make reports by patient with those samples that both your plate has passed the controls and its
   # diagnosis is conclusive
