@@ -7,6 +7,8 @@
 #
 ################################################################################
 
+library(tidyverse)
+library(growthrates)
 
 
 adjust_sigmoid <- function(curva, resolucion = 0.001){
