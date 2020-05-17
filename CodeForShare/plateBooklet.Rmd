@@ -1,0 +1,49 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+    latex_engine: pdflatex
+    template: theme/plateBooklet.tex
+
+---
+
+```{r echo=F, warning=F, results='asis'}
+
+library(knitr)
+library(kableExtra)
+kable(my_qc, row.names = FALSE, 
+			col.names = c("Tipo de Control","Nombre del Control Externo", "Usado para monitoriar", "nCoV-N1 2019", "nCoV-N2 2019", "RP"), 
+			align = "lclccc", 
+			format="latex", 
+			booktabs=TRUE, 
+			escape = FALSE) %>% 
+	column_spec(1:2, width = "4em") %>%
+	column_spec(3, width = "8em") %>%
+	column_spec(4:6, width = "4em") %>%
+	kable_styling(latex_options = c("striped", "scale_down"), 
+					fixed_thead = TRUE,
+					font_size = 10,
+					full_width = FALSE) %>%
+	add_header_above(header = setNames(6, paste("PLACA ID:", plate)), 
+					bold = T, 
+					align = "l", 
+					color = "white", 
+					background = "black")
+
+```  
+
+```{r echo=F, warning=F, results='asis'}
+
+library(knitr)
+library(kableExtra)
+kable(my_r, row.names = FALSE, 
+			col.names = c(" ","ID de la Placa", "ID Institución", "ID INMEGEN", "N1 (CoV2)", "N2 (Cov2)", "RP", "Resultado", "Obserevaciones*"), 
+			align = "cccccccl", 
+			format="latex", 
+			booktabs=TRUE, 
+			escape = FALSE) %>% 
+	add_header_above(c(" ", "Indicadores" = 3, "Genes blanco" = 3), bold = T) %>%
+	kable_styling(latex_options = c("repeat_header", "striped", "scale_down"), 
+					fixed_thead = TRUE) %>%
+	add_footnote(c("*Según el manual \"CDC-006-00019, Revision: 02 CDC/DDID/NCIRD/ , Division of Viral Diseases, Effective: 3/15/2020,2019-nCoV, rRT-PCR Diagnostic Panel Results Interpretation Guide\", page 33"))
+```

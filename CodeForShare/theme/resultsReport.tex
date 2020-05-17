@@ -1,0 +1,236 @@
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$table]{article}
+\usepackage{xcolor}
+\usepackage[$geometry$]{geometry}
+\newcommand*{\authorfont}{\fontfamily{cmss}\selectfont}
+$if(fontfamily)$
+\usepackage[$fontfamilyoptions$]{$fontfamily$}
+$else$
+\usepackage[T1]{fontenc}
+$endif$
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty} % originally center
+\newcommand{\blankline}{\quad\pagebreak[2]}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}} 
+\usepackage{longtable,booktabs}
+
+\usepackage{parskip}
+\usepackage{titlesec}
+\titlespacing\section{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{12pt plus 4pt minus 2pt}{6pt plus 2pt minus 2pt}
+
+\titleformat*{\subsubsection}{\normalsize\itshape}
+
+\usepackage{titling}
+\setlength{\droptitle}{-.25cm}
+
+%\setlength{\parindent}{0pt}
+%\setlength{\parskip}{6pt plus 2pt minus 1pt}
+%\setlength{\emergencystretch}{3em}  % prevent overfull lines 
+
+\usepackage[$if(fontenc)$$fontenc$$else$T1$endif$]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{lastpage}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.0pt} 
+\lhead{}
+\chead{}
+\rhead{\footnotesize $title$ -- $date$}
+\lfoot{}
+\cfoot{\small \thepage/\pageref*{LastPage}}
+\rfoot{}
+
+\fancypagestyle{firststyle}
+{
+\renewcommand{\headrulewidth}{0pt}%
+   \fancyhf{}
+   \fancyfoot[C]{\small \thepage/\pageref*{LastPage}}
+}
+
+%\def\labelitemi{--}
+%\usepackage{enumitem}
+%\setitemize[0]{leftmargin=25pt}
+%\setenumerate[0]{leftmargin=25pt}
+
+
+
+
+\makeatletter
+\@ifpackageloaded{hyperref}{}{%
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+}
+% \@ifpackageloaded{color}{
+%     \PassOptionsToPackage{usenames,dvipsnames}{color}
+% }{%
+%     \usepackage[usenames,dvipsnames]{color}
+% }
+\makeatother
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={$for(author)$$author.name$ ($author.affiliation$)$sep$ and $endfor$},
+             pdfkeywords = {$if(keywords)$$keywords$$endif$},  
+            pdftitle={$title$$if(subtitle)$: $subtitle$$endif$},
+            colorlinks=true,
+            citecolor=$if(citecolor)$$citecolor$$else$blue$endif$,
+            urlcolor=$if(urlcolor)$$urlcolor$$else$blue$endif$,
+            linkcolor=$if(linkcolor)$$linkcolor$$else$magenta$endif$,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+
+\setcounter{secnumdepth}{0}
+
+$if(listings)$
+\usepackage{listings}
+$endif$
+$if(lhs)$
+\lstnewenvironment{code}{\lstset{language=r,basicstyle=\small\ttfamily}}{}
+$endif$
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+$if(verbatim-in-note)$
+\usepackage{fancyvrb}
+$endif$
+$if(tables)$
+\usepackage{longtable}
+$endif$
+
+$if(graphics)$
+\usepackage{graphicx}
+% We will generate all images so they have a width \maxwidth. This means
+% that they will get their normal width if they fit onto the page, but
+% are scaled down if they would overflow the margins.
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+\else\Gin@nat@width\fi}
+\makeatother
+\let\Oldincludegraphics\includegraphics
+\renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=\maxwidth]{#1}}
+$endif$
+
+
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
+$endif$
+$if(biblatex)$
+\usepackage$if(biblio-style)$[style=$biblio-style$]$endif${biblatex}
+$if(biblatexoptions)$\ExecuteBibliographyOptions{$for(biblatexoptions)$$biblatexoptions$$sep$,$endfor$}$endif$
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+$endif$
+$if(listings)$
+\usepackage{listings}
+$endif$
+
+\usepackage{setspace}
+
+$if(graphics)$
+\usepackage[export]{adjustbox}
+$endif$
+
+
+\usepackage{float}
+
+\begin{document}  
+
+\thispagestyle{plain} 
+
+
+$if(graphics)$$if(logo)$\Oldincludegraphics[width=$if(width)$$width$$else$0.3$endif$\textwidth, $if(logoposition)$$logoposition$$else$right$endif$]{$logo$}$else$$endif$$endif$
+
+
+\begin{center} 
+{\fontfamily{cmss}\selectfont
+\Large \bfseries{\scshape{Unidad de Secuenciación del Instituto Nacional de Medicina Genómica}}
+}
+\end{center}
+
+\begin{flushright} 
+Ciudad de México a \today
+\end{flushright}
+
+\begin{center} 
+{\fontfamily{cmss}\selectfont
+\large \bfseries{\scshape{Reporte Técnico de Laboratorio}}\\
+}
+\end{center}
+\hrule
+\vspace{2mm}
+
+Estimado Dr(a): $if(receiber)$\texttt{$receiber$}$else$A quien corresponda$endif$
+
+
+Encuentre a continuación el reporte de las muestras entregadas por su institución:\\
+
+Número de muestras entregadas: $if(allsamples)$\texttt{$allsamples$}$else$TBD$endif$\\
+Número de muestras procesadas: $if(nsamples)$\texttt{$nsamples$}$else$TBD$endif$\\
+Fecha de toma de muestra: $if(sampling)$\texttt{$sampling$}$else$TBD$endif$\\
+Fecha de procesamiento de las muestras: $if(processingdate)$\texttt{$processingdate$}$else$TBD$endif$\\
+Institución solicitante: $if(id)$\texttt{$id$}$else$TBD$endif$\\  
+
+\medskip
+
+\textbf{Resumen de resultados:}
+
+\medskip
+
+
+Se procesaron las muestras de $if(method)$\texttt{$method$}$else$TBD$endif$, descritas en la(s) tabla(s) adjunta (s), para la detección de material genético del SARS-CoV-2 (COVID-19) utilizando dos sondas (N1, N2) específicas para la detección de la nucleocápside del virus y utilizando la técnica de reacción en cadena de la polimerasa con retrotranscriptasa reversa en tiempo real (qRT-PCR).\\
+
+\medskip
+
+Encontrará los resultados en la tabla(s) adjunta (s) a este documento.\\
+
+\smallskip
+
+Le enviamos un cordial saludo y estamos atentos a sus dudas y/o comentarios.\\
+
+\medskip
+
+\vspace*{\fill}
+\begin{center}
+A T E N T A M E N T E
+\end{center}
+
+\vspace{2cm}
+\begin{center}
+\begin{tabular}{m{8cm} p{1cm} m{8cm}}
+~ & ~ & ~ \\
+~ & ~ & ~ \\
+\cmidrule(r){1-1}\cmidrule(l){3-3}
+M. en C. Alfredo Mendoza Vargas & ~ & Dr. Juan Pablo Reyes Grajeda \\
+\end{tabular}
+
+\footnotesize
+\begin{tabular}{m{8cm} p{1cm} m{8cm}}
+Responsable del Área Operativa & ~ & Subdirector de Desarrollo de Aplicaciones Clínicas\\
+Tel. 55 5350 1972 & ~ & Responsable Sanitario ante COFEPRIS\\
+mail: amendoza@inmegen.gob.mx & ~ & Tel. 55 5350 1900 ext. 1192\\
+~ & ~ & mail: jreyes@inmegen.gob.mx \\
+\end{tabular}
+\end{center}
+
+\clearpage
+
+$body$
+
+
+\vspace*{\fill}
+{\footnotesize Las muestras \textbf{no} fueron tomadas por el INMEGEN. Fueron procesadas por el personal $brigada$ y validados por el(los) analista(s) $analista$. \par}
+\end{document}
+

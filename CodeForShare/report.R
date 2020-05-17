@@ -15,80 +15,133 @@
 ################################################################################
 library("rmarkdown")
 
-################################################################################
-#define analysis functions here
-################################################################################
-
-#report <- read.csv("test_diagnosis.csv")
-report1 <- read.table("reportstest.results.txt", header = TRUE, sep = " ", stringsAsFactors = FALSE)
-report2 <- read.table("reportstest.results2.txt", header = TRUE, sep = " ", stringsAsFactors = FALSE)
 
 
-## simulate data
-
-batch <- rbind(report1, report2)
-
-## "batch" object contains the information that will be provided by the eds analysis system.
-# batch <- rbind(report, report, report, report, report, report, report, report, report, report, report, report)
-# batch$qc <- c(rep("PASS", 12), rep("FAIL", 12), rep("PASS", 12), rep("FAIL", 12))
-# batch$ptc.pass <- c(rep("TRUE", 12), rep("FALSE", 12), rep("TRUE", 12), rep("FALSE", 12))
-# batch$sample <- paste("INM", sub('(^[0-9]$)','0\\1', 1:48), sep = "")
-# batch <- cbind(plate = c(rep("plate1", 12), rep("plate2", 12), rep("plate3", 12), rep("plate4", 12)), batch)
-
-names <- c("Louis Armstrong", "Duke Ellington", "Miles Davis", "Charlie Parker", "John Coltrane", "Dizzy Gillespie", "Billie Holiday", "Thelonious Monk", "Charles Mingus", "Count Basie", "Lester Young", "Coleman Hawkins", "Ella Fitzgerald", "Sonny Rollins", "Sidney Bechet", "Art Blakey", "Ornette Coleman", "Benny Goodman", "Jelly Roll Morton", "Bill Evans", "Art Tatum", "Clifford Brown", "Stan Getz", "Sarah Vaughan", "Bud Powell", "Fletcher Henderson", "Django Reinhardt", "Herbie Hancock", "Wayne Shorter", "Horace Silver", "Dave Brubeck", "Rahsaan Roland Kirk", "Cecil Taylor", "King Oliver", "Sun Ra", "Gil Evans", "Lionel Hampton", "Art Pepper", "Eric Dolphy", "Oscar Peterson", "Charlie Christian", "Ben Webster", "Fats Waller", "Earl Hines", "Woody Herman", "Wes Montgomery", "J.J. Johnson", "John McLaughlin")
+######################################################################################
+######################################################################################
+#                                 M E T A D A T A                                    #
+######################################################################################
+######################################################################################
 
 ## "metadata" object contains the information that the eds analysis system does not have and will have to be added by the COVID binnacle
-metadata <- data.frame(client = c(rep("Instituto Uno", 3), rep("Instituto Dos", 4), rep("Instituto Tres", 18), rep("Instituto Cuatro", 21)),
-                      id_client = c(rep("A", 3), rep("D", 4), rep("E", 18), rep("F", 21)), 
-                      id_samples_client = c(paste("isnt1_", sub('(^[0-9]$)','0\\1', 1:3), sep = ""), paste("isnt2_", sub('(^[0-9]$)','0\\1', 1:4), sep = ""), paste("isnt3_", sub('(^[0-9]$)','0\\1', 1:18), sep = ""), paste("isnt4_", sub('(^[0-9]$)','0\\1', 1:21), sep = "")), 
-                      patient_name = names[-c(47,48)],
-                      id_inmegen = c("CV-20-A-06Y000022", "CV-20-A-06Y000023", "CV-20-A-06Y000024", "CV-20-D-06Y000088", "CV-20-D-06Y000089", "CV-20-D-06Y000090", "CV-20-D-06Y000091", "CV-20-E-06Y000073", "CV-20-E-06Y000074", "CV-20-E-06Y000075", "CV-20-E-06Y000076", "CV-20-E-06Y000077", "CV-20-E-06Y000078", "CV-20-E-06Y000079", "CV-20-E-06Y000080", "CV-20-E-06Y000082", "CV-20-E-06Y000083", "CV-20-E-06Y000084", "CV-20-E-06Y000085", "CV-20-E-06Y000086", "CV-20-E-06Y000087", "CV-20-E-06Y000088", "CV-20-E-06Y000089", "CV-20-E-06Y000096", "Rep CV-20-E-05Y000041", "CV-20-F-06Y000001", "CV-20-F-06Y000002", "CV-20-F-06Y000003", "CV-20-F-06Y000004", "CV-20-F-06Y000005", "CV-20-F-06Y000006", "CV-20-F-06Y000007", "CV-20-F-06Y000008", "CV-20-F-06Y000009", "CV-20-F-06Y000010", "CV-20-F-06Y000011", "CV-20-F-06Y000012", "CV-20-F-06Y000013", "CV-20-F-06Y000014", "CV-20-F-06Y000015", "CV-20-F-06Y000016", "CV-20-F-06Y000017", "CV-20-F-06Y000018", "CV-20-F-06Y000019", "CV-20-F-06Y000020", "CV-20-F-06Y000021"),
-                      method = sample(c("hisopado nasofaríngeo", "saliva", "lavado bronquial"), size = 46, replace = TRUE))
 
-which(batch$sample %in% metadata$id_inmegen)
-  
-result_table <- cbind(metadata, batch[match(metadata$id_inmegen, batch$sample),])
+names <- c("Louis Armstrong", "Duke Ellington", "Miles Davis", "Charlie Parker", "John Coltrane", "Dizzy Gillespie", "Billie Holiday", "Thelonious Monk", "Charles Mingus", "Count Basie", "Lester Young", "Coleman Hawkins", "Ella Fitzgerald", "Sonny Rollins", "Sidney Bechet", "Art Blakey", "Ornette Coleman", "Benny Goodman", "Jelly Roll Morton", "Bill Evans", "Art Tatum", "Clifford Brown", "Stan Getz", "Sarah Vaughan", "Bud Powell", "Fletcher Henderson", "Django Reinhardt", "Herbie Hancock", "Wayne Shorter", "Horace Silver", "Dave Brubeck", "Rahsaan Roland Kirk", "Cecil Taylor", "King Oliver", "Sun Ra", "Gil Evans", "Lionel Hampton", "Art Pepper", "Eric Dolphy", "Oscar Peterson", "Charlie Christian", "Ben Webster", "Fats Waller", "Earl Hines", "Woody Herman", "Wes Montgomery", "J.J. Johnson", "John McLaughlin", "Artie Shaw", "Lee Morgan", "David Murray", "Chick Corea", "Max Roach", "Roy Eldridge", "Modern Jazz Quartet", "Anthony Braxton", "Bix Beiderbecke", "Dexter Gordon", "Keith Jarrett", "Lee Konitz", "Stan Kenton", "Joe Henderson", "Gerry Mulligan", "Benny Carter", "Teddy Wilson", "Freddie Hubbard", "Cannonball Adderley", "McCoy Tyner", "Chet Baker", "Lennie Tristano", "Jimmy Smith", "Mary Lou Williams", "George Russell", "Fats Navarro", "Bennie Moten", "Jimmie Lunceford", "Wynton Marsalis", "Albert Ayler", "Charlie Haden", "Erroll Garner", "Meade Lux Lewis", "Pat Metheny", "Jack Teagarden", "Johnny Hodges", "Chick Webb", "James P. Johnson", "Jimmy Giuffre", "Jaco Pastorius", "Hank Mobley", "Elvin Jones", "Evan Parker", "Paul Chambers", "Ron Carter", "Carla Bley", "Bennie Golson", "Jackie McLean", "James Carter", "Donald Byrd", "Johnny Dodds", "Glenn Mille")
+id_inmegen <- read.table(file = "data/idINMEGEN.txt", header = FALSE, stringsAsFactors = FALSE)[[1]]
+id_client <- substr(id_inmegen, 7,7)
+Replace <- data.frame(from = c("F", "A", "E", "D"), to = c("Instituto 4", "Instituto 1", "Instituto 2", "Instituto 3"))
+client <- DataCombine::FindReplace(data.frame(a=substr(id_inmegen, 7,7)), Var = "a",  replaceData = Replace )[[1]]
+id_samples_client <- id_client
+      id_samples_client[which(id_client == "F")] <- paste("isnt4_", sub('(^[0-9]$)','0\\1', 1:length(id_samples_client[which(id_client == "F")])), sep = "")
+      id_samples_client[which(id_client == "A")] <- paste("isnt1_", sub('(^[0-9]$)','0\\1', 1:length(id_samples_client[which(id_client == "A")])), sep = "")
+      id_samples_client[which(id_client == "E")] <- paste("isnt2_", sub('(^[0-9]$)','0\\1', 1:length(id_samples_client[which(id_client == "E")])), sep = "")
+      id_samples_client[which(id_client == "D")] <- paste("isnt3_", sub('(^[0-9]$)','0\\1', 1:length(id_samples_client[which(id_client == "D")])), sep = "")
+method = sample(c("hisopado nasofaríngeo", "saliva", "lavado bronquial"), size = length(id_inmegen), replace = TRUE)
+notes <- sample(c("", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", "", "", "", "Repetir extración y RT-PCR. Solo uno de los dos blancos para CoV-2 amplificó.", "", "", ""), size = length(id_inmegen), replace = TRUE)
+plate <- rep("a", 85)
+plate[1:24] <- "P-01-06Y-2CQP-1" 
+plate[25:48] <- "P-01-09Y-2CQP-1v2" 
+plate[49:64] <- "P-01-30A-2CQP-1" 
+plate[65:85] <- "P-04-06Y-2CQP-1"
+
+metadata <- data.frame(plate = plate,
+                      id_inmegen = id_inmegen,
+                      client = client,
+                      id_client = id_client, 
+                      id_samples_client = id_samples_client, 
+                      patient_name = names[1:length(id_inmegen)],
+                      method = method,
+                      notes= notes)
 
 
-######make_reports
+input <- "data/P-01-06Y-2CQP-1.res"
+qc_input <- "data/P-01-06Y-2CQP-1.qc"
 
-# Preguntar como serán selecciona los reportes tanto por muestra como por institución 
-# ¿por intervalo de fecha? ¿se generarán diariamente para todas las instituciones trabajadas?
-# En esta versión se trabaja en un reporte para una institución definida por el usuario.
-#
+results <- read.table(input, header = TRUE, stringsAsFactors = FALSE)
+
+# result_table contains informatión generated by ARPA plus "metadata" by plate
+result_table <- cbind(metadata[metadata$id_inmegen %in% results$sample,], results[match(metadata[metadata$id_inmegen %in% results$sample,]$id_inmegen, results$sample),])
+
+
+######################################################################################
+######################################################################################
+#                                    s     r    c                                    #
+######################################################################################
+######################################################################################
+
 
 ## Extrae la fecha de procesamiento de placa a partir del ID de muestra del INMEGEN
-id2date <- function(idinmegen){
-codeMonth <- c("E", "F", "Z", "A", "Y", "J", "L", "G", "S", "O", "N", "D")
-myDate <- as.Date(paste(paste("20", substr(idinmegen, start = 4, stop = 5), sep = ""), which(codeMonth %in% substr(idinmegen, start = 11, stop = 11)), substr(idinmegen, start = 9, stop = 10), sep ="-"))
-return(myDate)
+getDate <- function(idinmegen){
+  codeMonth <- c("E", "F", "Z", "A", "Y", "J", "L", "G", "S", "O", "N", "D")
+  myDate <- as.Date(paste(paste("20", substr(idinmegen, start = 4, stop = 5), sep = ""), 
+                        sapply(idinmegen, function(x){which(codeMonth %in% substr(x, start = 11, stop = 11))}), 
+                        substr(idinmegen, start = 9, stop = 10), sep ="-"))
+  return(myDate)
 }
 
-reportSamples <- function(result_table, outdir){
-    Sys.setenv(LANG = "es")
+
+getClientID <- function(idinmegen){
+  sapply(sapply(idinmegen, 
+            function(x){strsplit(x, split = "-")}), 
+    function(x){x[3]})
+}
+
+## Imprime el informe de resultados para el cliente
+resultsReport <- function(result_table, outdir){
     the_samples <- which(result_table$qc == "PASS" 
         & (result_table$classification == "positive" 
           | result_table$classification == "negative"))
-    my_r <- result_table[the_samples, c("id_inmegen", "id_samples_client", "id_client", "patient_name", "method", "classification")]
+    my_r <- result_table[the_samples, c("id_inmegen", "id_samples_client", "client", "patient_name", "method", "classification")]
             my_r <- cbind(nsample = sub('(^[0-9]$)','0\\1', 1:length(my_r[,1])), my_r)
             my_r$classification = ifelse(my_r$classification == "positive", paste("\\cellcolor{red!50}{", "positive", "}", sep = ""),"negative")
-            my_r$id_samples_client <- gsub("_", "-", my_r$id_samples_client)
-    client <- strsplit(my_r$id_inmegen[1], split = "-")[[1]][3]
-    client_file <- gsub("[^[:alnum:]]", "_", client) # Name of the claimant institution safe for file name
+            my_r$id_samples_client <- gsub("[^[:alnum:]]", "-", my_r$id_samples_client) # Cleint ID sample safe for kable/latex
+    client <- unique(result_table$client)
     n_samples <- length(rownames(my_r))
     allsamples <- length(rownames(result_table))
-    processingdate <- id2date(my_r$id_inmegen[1])
+    processingdate <- unique(getDate(my_r$id_inmegen))
+    client_file <- paste0(gsub("[^[:alnum:]]", "_", client[order(client)]), collapse = "-")# Claimant name institution safe for file name
     outpath <- paste0(outdir, "/", Sys.Date(), "_", client_file, "_", "report.pdf") 
-    render("report.Rmd",output_file = outpath)
+    render("resultsReport.Rmd",output_file = outpath)
   }
 
+# Imprime el informe de placa para el lab
+plateBooklet <- function(result_table, outdir, qc_input){
+    #plate <- stringr::str_remove(string = basename(input), pattern = ".res")
+    plate <- unique(result_table$plate)
+
+    qcdf <- data.frame(controType = c("Positive", "Negative", "Extracción"), 
+                    externalName = c("nCoVPC", "NTC", "HSC"), 
+                    used = c("Falla sustancial del reactivo, incluida la integridad del primer y la sonda.", "Contaminación de reactivos y/o ambiente.", "Falla en el procedimiento de lisis y extracción, contaminación potencial durante la extracción."))
+    qc_results <- read.table(qc_input, header = TRUE, sep = " ", row.names = 1)[c("PTC", "NTC", "EC"),c("N1","N2","RP")]
+    my_qc <- cbind(qcdf,qc_results)
+    rownames(my_qc) <- c("PTC", "NTC", "EC")
+    my_qc["PTC", c("N1", "N2", "RP")] = ifelse(my_qc["PTC", "N1"] <=38 & my_qc["PTC", "N2"] <=38 & my_qc["PTC", "RP"] >=35, paste("\\color{green}{", my_qc["PTC", c("N1", "N2", "RP")], "}", sep = "") , paste("\\cellcolor{red!50}{", my_qc["PTC", c("N1", "N2", "RP")], "}", sep = "") )
+    my_qc["NTC", c("N1", "N2", "RP")] = ifelse(my_qc["NTC", c("N1", "N2", "RP")] == Inf, paste("\\color{green}{", "45", "}", sep = ""), paste("\\cellcolor{red!50}{", my_qc["NTC", c("N1", "N2", "RP")], "}", sep = "") )
+    my_qc["EC", c("N1", "N2", "RP")] = ifelse(is.na(my_qc$N1[3]), my_qc["EC", c("N1", "N2", "RP")], ifelse(my_qc["EC", c("N1", "N2", "RP")] == Inf, paste("\\color{green}{", "45", "}", sep = ""), paste("\\cellcolor{red!50}{", my_qc["EC", c("N1", "N2", "RP")], "}", sep = "")))
+
+    my_r <- result_table[,c("plate", "id_samples_client", "id_inmegen", "N1", "N2", "RP", "classification", "notes")]
+      my_r <- cbind(nsample = sub('(^[0-9]$)','0\\1', 1:length(my_r[,1])), my_r)
+                  my_r$id_samples_client <- gsub("[^[:alnum:]]", "-", my_r$id_samples_client) # Cleint ID sample safe for kable/latex
+    processingdate <- unique(getDate(my_r$id_inmegen))
+    outpath <- paste0(outdir, "/", Sys.Date(), "_", plate, "_", "plateBooklet.pdf") 
+    render("plateBooklet.Rmd",output_file = outpath)
+  }
+
+
+
+
+######################################################################################
+######################################################################################
+#                                    a     p    p                                    #
+######################################################################################
+######################################################################################
+
+
+
 make_reports <- function(result_table, # data with columns like simulated data
-                         #input, # The origin of the data will be defined by the DDT
-                         #id_client, # Internal ID of the requesting institution
                          outdir, # The report output directory will be defined either by the user or by the DDT
-                         report = TRUE){
-      if(report == TRUE){
-        lapply(split(result_table,result_table$id_client), reportSamples, outdir = outdir)
+                         report = FALSE){
+      if(report == FALSE){
+        lapply(split(result_table,result_table$id_client), resultsReport, outdir = outdir)
       }else{
   # make reports by patient with those samples that both your plate has passed the controls and its
   # diagnosis is conclusive
@@ -104,20 +157,4 @@ make_reports <- function(result_table, # data with columns like simulated data
   }
 }
 
-
-
-
-df <-structure(list(Server =structure(1:2, .Label =c("Server1","Server2"), class = "factor"), CPU =c(79.17, 93), UsedMemPercent =c(16.66,18.95)), .Names =c("Server", "CPU", "UsedMemPercent"), row.names =c(NA,-2L), class = "data.frame")
-
-df[, 2] =ifelse(df[, 2]>80,paste("\\color{red}{",round(df[, 2], 2), "}"),round(df[, 2], 2))
-
-
-
-\cellcolor{red!50}
-# What you need
-
-kable(df, "latex", escape = F)
-
-
-dicMonth <- data.frame(codeMonth = c("E", "F", "Z", "A", "Y", "J", "L", "G", "S", "O", "N", "D"), month =c("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"), numMonth = 1:12)
 
