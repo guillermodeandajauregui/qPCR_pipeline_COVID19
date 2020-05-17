@@ -455,16 +455,24 @@ cdc_classification <- function(SampleResults){
   #takes results 
   #assigns classification
   SampleResults %>% 
-    mutate(classification = ifelse(test = RP > 35, 
-                                   "invalid",
-                                   ifelse(N1 <= 38 & N2 <= 38, 
-                                          "positive", 
-                                          ifelse(N1 > 38 & N2 > 38,
-                                                 "negative", 
-                                                 "inconclusive"
-                                          )
-                                   )
-    )
-    )
+    mutate(classification = case_when(RP > 35 ~ "invalid",
+                                      N1 <= 38 & N2 >= 38, "positive",
+                                      N1 != Inf & N2 != Inf, "edge_positive",
+                                      N1 == Inf & N2 == Inf, "negative",
+                                      N1 == Inf & N2 != Inf, "inconclusive",
+                                      N1 != Inf & N2 == Inf, "inconclusive"
+                                      )
+           )
+    # mutate(classification = ifelse(test = RP > 35, 
+    #                                "invalid",
+    #                                ifelse(N1 <= 38 & N2 <= 38, 
+    #                                       "positive", 
+    #                                       ifelse(N1 > 38 & N2 > 38,
+    #                                              "negative", 
+    #                                              "inconclusive"
+    #                                       )
+    #                                )
+    # )
+    # )
 }
 

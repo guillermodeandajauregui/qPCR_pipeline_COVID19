@@ -53,7 +53,7 @@ adjust_sigmoid <- function(curva, resolucion = 0.001){
     
     #if fit_try failed
     ### try to adjust with growth rates 
-    
+    message("logistic fit failed; trying generalized logistic fit")
     #####define some parameters
     pars <- c(y0 = 0.01, mumax = 0.2, K = 0.1)
     
