@@ -115,16 +115,23 @@ data.frame(ntc.pass = qc_results$ntc.pass,
 
 
 ################################################################################
+#Get the plate name
+################################################################################
+
+
+plate <- stringr::str_remove(string = basename(input), pattern = ".eds")
+
+################################################################################
 #Write QC output
 ################################################################################
 
-out_path_qc = paste0(output, "qc_results.txt", collapse="/")
+out_path_qc = paste(output, "/", plate, ".qc", sep="")
 write_delim(x = qc_results$qc.values, path = out_path_qc)
 ################################################################################
 #Write run output
 ################################################################################
 
-out_path_results = paste0(output, "test.results.txt", collapse="/")
+out_path_results = paste(output, "/", plate, ".res", sep="")
 write_delim(x = test_diagnosis, path = out_path_results)
 ################################################################################
 #Done
