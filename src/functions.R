@@ -459,7 +459,7 @@ cdc_classification <- function(SampleResults){
                                       N1 <= 38 & N2 >= 38 ~ "positive",
                                       N1 != Inf & N2 != Inf ~ "edge_positive",
                                       N1 == Inf & N2 == Inf ~ "negative",
-                                      N1 == Inf & N2 != Inf, ~ "inconclusive",
+                                      N1 == Inf & N2 != Inf ~ "inconclusive",
                                       N1 != Inf & N2 == Inf ~ "inconclusive"
                                       )
            )
