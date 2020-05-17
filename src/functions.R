@@ -456,11 +456,11 @@ cdc_classification <- function(SampleResults){
   #assigns classification
   SampleResults %>% 
     mutate(classification = case_when(RP > 35 ~ "invalid",
-                                      N1 <= 38 & N2 >= 38, "positive",
-                                      N1 != Inf & N2 != Inf, "edge_positive",
-                                      N1 == Inf & N2 == Inf, "negative",
-                                      N1 == Inf & N2 != Inf, "inconclusive",
-                                      N1 != Inf & N2 == Inf, "inconclusive"
+                                      N1 <= 38 & N2 >= 38 ~ "positive",
+                                      N1 != Inf & N2 != Inf ~ "edge_positive",
+                                      N1 == Inf & N2 == Inf ~ "negative",
+                                      N1 == Inf & N2 != Inf, ~ "inconclusive",
+                                      N1 != Inf & N2 == Inf ~ "inconclusive"
                                       )
            )
     # mutate(classification = ifelse(test = RP > 35, 
