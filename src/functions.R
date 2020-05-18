@@ -249,41 +249,44 @@ get_probeThreshold <- function(tdrn_long, my_probe){
 
 
 ##### analyze_sample
-analyze_sample <- function(tdrn_sample, probes, threshold_list){
-  #takes a filtered tdrn for a single sample
-  #and a plate threshold
-  #returns a data frame with Ct for each probe
-  #returns Inf if value never crosses threshold
-  
-  lapply(X = probes, FUN = function(my_probe){
-    #we use a trycatch to get NAs for probes not measured in well
-    tryCatch(
-      {
-        #extract curve
-        the_curve     <- extract_curve(tdrn_sample, probe == my_probe)
-        #extract threshold
-        
-        
-        #the_threshold <- get_threshold.rg(the_curve)
-        the_threshold = threshold_list[[my_probe]]
-        #the_threshold <- 725
-        #print(the_threshold)
-        #does the curve crosses the threshold?
-        #threshold for RP should be crossed at time 35
-        #any(the_curve$value[1:40] > the_threshold)
-        Ct <- 
-        the_curve %>% 
-          filter(value >= the_threshold) %>% 
-          pull(cycles) %>% min
-        
-      },
-      error =function(cond){
-        message("well does not have that probe")
-        return(NA)
-      }
-    )
-  }) %>% bind_rows()
-}
+
+##### commented out; superseded by version in functions_adjustment
+
+# analyze_sample <- function(tdrn_sample, probes, threshold_list){
+#   #takes a filtered tdrn for a single sample
+#   #and a plate threshold
+#   #returns a data frame with Ct for each probe
+#   #returns Inf if value never crosses threshold
+#   
+#   lapply(X = probes, FUN = function(my_probe){
+#     #we use a trycatch to get NAs for probes not measured in well
+#     tryCatch(
+#       {
+#         #extract curve
+#         the_curve     <- extract_curve(tdrn_sample, probe == my_probe)
+#         #extract threshold
+#         
+#         
+#         #the_threshold <- get_threshold.rg(the_curve)
+#         the_threshold = threshold_list[[my_probe]]
+#         #the_threshold <- 725
+#         #print(the_threshold)
+#         #does the curve crosses the threshold?
+#         #threshold for RP should be crossed at time 35
+#         #any(the_curve$value[1:40] > the_threshold)
+#         Ct <- 
+#         the_curve %>% 
+#           filter(value >= the_threshold) %>% 
+#           pull(cycles) %>% min
+#         
+#       },
+#       error =function(cond){
+#         message("well does not have that probe")
+#         return(NA)
+#       }
+#     )
+#   }) %>% bind_rows()
+# }
 
 ##### plate_qc
 plate_qc <- function(tdrn, all_probes){
