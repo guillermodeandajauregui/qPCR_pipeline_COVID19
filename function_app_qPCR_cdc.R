@@ -11,6 +11,7 @@
 #libraries
 ################################################################################
 source("src/functions.R")
+source("src/functions_adjustment.R")
 source("src/plots.R")
 ################################################################################
 #read data
@@ -113,7 +114,8 @@ data.frame(ntc.pass = qc_results$ntc.pass,
            test_diagnosis 
 ) %>% as.tbl() %>% select(sample, everything())
 
-
+test_diagnosis %>% 
+  filter(sample == "CV-20-A-07Y000156" )
 ################################################################################
 #Get the plate name
 ################################################################################
