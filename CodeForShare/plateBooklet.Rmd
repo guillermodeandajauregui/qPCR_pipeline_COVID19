@@ -17,13 +17,17 @@ kable(my_qc, row.names = FALSE,
 			format="latex", 
 			booktabs=TRUE, 
 			escape = FALSE) %>% 
-	column_spec(1:2, width = "4em") %>%
-	column_spec(3, width = "8em") %>%
-	column_spec(4:6, width = "4em") %>%
-	kable_styling(latex_options = c("striped", "scale_down"), 
+	column_spec(1,  border_left = TRUE, width = "1.5cm") %>%
+	column_spec(2, width = "1.5cm") %>%
+	column_spec(3, width = "3cm") %>%
+	column_spec(4, border_left = TRUE, width = "1.5cm") %>%
+	column_spec(5, width = "1.5cm") %>%
+	column_spec(6, border_right = TRUE, width = "1.5cm") %>%
+	kable_styling(latex_options = c("striped", "HOLD_position"), 
 					fixed_thead = TRUE,
-					font_size = 10,
-					full_width = FALSE) %>%
+					font_size = 8,
+					full_width = FALSE,
+					position = "left") %>%
 	add_header_above(header = setNames(6, paste("PLACA ID:", plate)), 
 					bold = T, 
 					align = "l", 
@@ -31,6 +35,7 @@ kable(my_qc, row.names = FALSE,
 					background = "black")
 
 ```  
+\medskip
 
 ```{r echo=F, warning=F, results='asis'}
 
@@ -38,12 +43,14 @@ library(knitr)
 library(kableExtra)
 kable(my_r, row.names = FALSE, 
 			col.names = c(" ","ID de la Placa", "ID Institución", "ID INMEGEN", "N1 (CoV2)", "N2 (Cov2)", "RP", "Resultado", "Obserevaciones*"), 
-			align = "cccccccl", 
+			align = "ccccccccl", 
 			format="latex", 
 			booktabs=TRUE, 
 			escape = FALSE) %>% 
 	add_header_above(c(" ", "Indicadores" = 3, "Genes blanco" = 3), bold = T) %>%
 	kable_styling(latex_options = c("repeat_header", "striped", "scale_down"), 
 					fixed_thead = TRUE) %>%
+	column_spec(5, border_left = TRUE) %>%
+	column_spec(8, border_left = TRUE, border_right = TRUE, bold = T) %>%
 	add_footnote(c("*Según el manual \"CDC-006-00019, Revision: 02 CDC/DDID/NCIRD/ , Division of Viral Diseases, Effective: 3/15/2020,2019-nCoV, rRT-PCR Diagnostic Panel Results Interpretation Guide\", page 33"))
 ```

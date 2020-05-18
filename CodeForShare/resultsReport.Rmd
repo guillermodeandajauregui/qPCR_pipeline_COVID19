@@ -31,5 +31,7 @@ logo: theme/inmegenlogosalud.pdf
 
 library(knitr)
 library(kableExtra)
-kable(my_r, row.names = FALSE, col.names = c("Número consecutivo","ID INMEGEN", "ID Institución", "Institución", "Nombre de paciente/proyecto", "Tipo de muestra", "Resultado"), align = "llcccr", format="latex", booktabs=TRUE, escape = FALSE) %>% kable_styling(latex_options = c(("repeat_header", "striped", "scale_down"), fixed_thead = TRUE)
+kable(my_r, row.names = FALSE, col.names = c("Número consecutivo","ID INMEGEN", "ID Institución", "Institución", "Nombre de paciente/proyecto", "Tipo de muestra", "Resultado"), 
+			align = "llcccr", format="latex", booktabs=TRUE, escape = FALSE) %>% 
+kable_styling(latex_options = c("repeat_header", "striped", "scale_down"), fixed_thead = TRUE)
 ```

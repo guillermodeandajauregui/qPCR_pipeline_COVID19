@@ -69,7 +69,7 @@ result_table <- cbind(metadata[metadata$id_inmegen %in% results$sample,], result
 ######################################################################################
 
 
-## Extrae la fecha de procesamiento de placa a partir del ID de muestra del INMEGEN
+## Extrae la fecha de procesamiento de placa a partir del ID INMEGEN de muestra
 getDate <- function(idinmegen){
   codeMonth <- c("E", "F", "Z", "A", "Y", "J", "L", "G", "S", "O", "N", "D")
   myDate <- as.Date(paste(paste("20", substr(idinmegen, start = 4, stop = 5), sep = ""), 
@@ -78,7 +78,7 @@ getDate <- function(idinmegen){
   return(myDate)
 }
 
-
+## Extrae el ID del cliente del ID INMEGEN de la muestra
 getClientID <- function(idinmegen){
   sapply(sapply(idinmegen, 
             function(x){strsplit(x, split = "-")}), 
@@ -108,23 +108,31 @@ plateBooklet <- function(result_table, outdir, qc_input){
     #plate <- stringr::str_remove(string = basename(input), pattern = ".res")
     plate <- unique(result_table$plate)
 
-    qcdf <- data.frame(controType = c("Positive", "Negative", "Extracción"), 
+    qcdf <- data.frame(controType = c("Positivo", "Negativo", "Extracción"), 
                     externalName = c("nCoVPC", "NTC", "HSC"), 
                     used = c("Falla sustancial del reactivo, incluida la integridad del primer y la sonda.", "Contaminación de reactivos y/o ambiente.", "Falla en el procedimiento de lisis y extracción, contaminación potencial durante la extracción."))
     qc_results <- read.table(qc_input, header = TRUE, sep = " ", row.names = 1)[c("PTC", "NTC", "EC"),c("N1","N2","RP")]
     my_qc <- cbind(qcdf,qc_results)
     rownames(my_qc) <- c("PTC", "NTC", "EC")
     my_qc["PTC", c("N1", "N2", "RP")] = ifelse(my_qc["PTC", "N1"] <=38 & my_qc["PTC", "N2"] <=38 & my_qc["PTC", "RP"] >=35, paste("\\color{green}{", my_qc["PTC", c("N1", "N2", "RP")], "}", sep = "") , paste("\\cellcolor{red!50}{", my_qc["PTC", c("N1", "N2", "RP")], "}", sep = "") )
-    my_qc["NTC", c("N1", "N2", "RP")] = ifelse(my_qc["NTC", c("N1", "N2", "RP")] == Inf, paste("\\color{green}{", "45", "}", sep = ""), paste("\\cellcolor{red!50}{", my_qc["NTC", c("N1", "N2", "RP")], "}", sep = "") )
-    my_qc["EC", c("N1", "N2", "RP")] = ifelse(is.na(my_qc$N1[3]), my_qc["EC", c("N1", "N2", "RP")], ifelse(my_qc["EC", c("N1", "N2", "RP")] == Inf, paste("\\color{green}{", "45", "}", sep = ""), paste("\\cellcolor{red!50}{", my_qc["EC", c("N1", "N2", "RP")], "}", sep = "")))
+    my_qc["NTC", c("N1", "N2", "RP")] = ifelse(my_qc["NTC", c("N1", "N2", "RP")] == Inf, paste("\\color{green}{", "+45", "}", sep = ""), paste("\\cellcolor{red!50}{", my_qc["NTC", c("N1", "N2", "RP")], "}", sep = "") )
+    my_qc["EC", c("N1", "N2", "RP")] = ifelse(is.na(my_qc$N1[3]), my_qc["EC", c("N1", "N2", "RP")], ifelse(my_qc["EC", c("N1", "N2", "RP")] == Inf, paste("\\color{green}{", "+45", "}", sep = ""), paste("\\cellcolor{red!50}{", my_qc["EC", c("N1", "N2", "RP")], "}", sep = "")))
 
     my_r <- result_table[,c("plate", "id_samples_client", "id_inmegen", "N1", "N2", "RP", "classification", "notes")]
       my_r <- cbind(nsample = sub('(^[0-9]$)','0\\1', 1:length(my_r[,1])), my_r)
-                  my_r$id_samples_client <- gsub("[^[:alnum:]]", "-", my_r$id_samples_client) # Cleint ID sample safe for kable/latex
+      my_r$id_samples_client <- gsub("[^[:alnum:]]", "-", my_r$id_samples_client) # Cleint ID sample safe for kable/latex
+      my_r[,"N1"] = ifelse(my_r[,"N1"] == "Inf", "Indeterminado", paste("\\cellcolor{red!50}{", my_r[,"N1"], "}", sep = ""))
+      my_r[,"N2"] = ifelse(my_r[,"N2"] == "Inf", "Indeterminado", paste("\\cellcolor{red!50}{", my_r[,"N2"], "}", sep = ""))
+      my_r[,"classification"] = ifelse(my_r[,"classification"] == "positive", "\\cellcolor{red!50}{positivo}", 
+                                      ifelse(my_r[,"classification"] == "negative", "\\cellcolor{yellow!50}{negativo}", 
+                                            ifelse(my_r[,"classification"] == "inconclusive", "\\cellcolor{cyan!50}{inconclusive}", 
+                                                  ifelse(my_r[,"classification"] == "invalid", "\\cellcolor{cyan!50}{invalid}", 
+                                                        ifelse(my_r[,"classification"] == "edge_positive", "\\cellcolor{red!25}{positivo marginal}", 
+                                                          my_r[,"classification"])))))
     processingdate <- unique(getDate(my_r$id_inmegen))
     outpath <- paste0(outdir, "/", Sys.Date(), "_", plate, "_", "plateBooklet.pdf") 
     render("plateBooklet.Rmd",output_file = outpath)
-  }
+}
 
 
 
@@ -145,15 +153,7 @@ make_reports <- function(result_table, # data with columns like simulated data
       }else{
   # make reports by patient with those samples that both your plate has passed the controls and its
   # diagnosis is conclusive
-    lapply(seq_along(result_table$sample[the_samples]), function(i){
-      client <- result_table$client[the_samples][i]
-      idsamplesclient <- result_table$id_samples_client[the_samples][i]
-      patient_name <- result_table$patient_name[the_samples][i]
-      diagnosis <- ifelse(result_table$classification[the_samples][i] == "positive", "SÍ", "NO")
-      r_results <- data.frame(probe = c("N1", "N2", "RP"), Ct = c(ifelse(result_table$N1[the_samples][i] == Inf, "45+", result_table$N1[the_samples][i]), ifelse(result_table$N2[the_samples][i] == Inf, "45+", result_table$N2[the_samples][i]), ifelse(result_table$RP[the_samples][i] == Inf, "45+", result_table$RP[the_samples][i])))
-      outpath <- paste0(outdir, "/", Sys.Date(), "_", idsamplesclient, ".pdf")
-      render("sample.Rmd",output_file = outpath)
-    })
+    lapply(split(result_table,result_table$plate), plateBooklet, outdir = outdir)
   }
 }
 
