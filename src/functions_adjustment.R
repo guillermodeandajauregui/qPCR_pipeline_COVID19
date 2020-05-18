@@ -84,8 +84,17 @@ adjust_sigmoid <- function(curva, resolucion = 0.001){
       )
       
       if(class(bad_exp_adj)=="try-error"){
-        message("this is a really edge case, please check manually")
-        return("edge_case")
+        message("last try: see if first value is less than ten times first value")
+        
+        if(10*first(df$value) < last(df$value)){
+          
+          message("last is at least 10 times greater than first")
+          return(df)
+          
+        }else{
+          message("this is a really extreme case, please check manually")
+          return("not_adjusted")
+        }
       }
       
       df.check <- 
