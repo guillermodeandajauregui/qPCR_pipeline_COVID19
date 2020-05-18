@@ -436,7 +436,7 @@ test.plate <- function(tdrn, probes){
   #analyze tests
   test.results <- 
     lapply(test.samples, FUN = function(my_sample){
-      
+      print(my_sample)
       sample_data <-
         test.df %>% 
         filter(sample.label == my_sample) 
