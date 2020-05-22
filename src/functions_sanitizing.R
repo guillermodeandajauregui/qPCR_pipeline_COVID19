@@ -31,10 +31,6 @@ CheckResultsEDS <- function(eds){
   return(TRUE)
 }
 
-CheckResultsEDS(eds = my_test_bueno)
-CheckResultsEDS(eds = my_test_malo)
-CheckResultsEDS(eds = my_test_no_results)
-
 ###CheckNamesEDS
 
 CheckNamesEDS <- function(eds){
