@@ -14,7 +14,7 @@ source("src/functions.R")
 source("src/functions_sanitizing.R")
 source("src/functions_adjustment.R")
 source("src/plots.R")
-
+source("src/reports.R")
 ################################################################################
 #read data
 ################################################################################
@@ -150,6 +150,13 @@ data.frame(plate    = plate,
            test_diagnosis 
 ) %>% as.tbl() %>% select(sample, everything())
 
+################################################################################
+#Write plate Booklet
+################################################################################
+
+plateBooklet(results = test_diagnosis,
+             qc_results = qc_results,
+             outdir = output)
 
 ################################################################################
 #Write QC output
