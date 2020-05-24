@@ -15,16 +15,10 @@
 \usepackage{makecell}
 \usepackage{xcolor}
 \usepackage[spanish]{babel}
-
 \usepackage[utf8]{inputenc}
-
-
 \usepackage[export]{adjustbox}
 $if(graphics)$
 \usepackage{graphicx}
-% We will generate all images so they have a width \maxwidth. This means
-% that they will get their normal width if they fit onto the page, but
-% are scaled down if they would overflow the margins.
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
 \else\Gin@nat@width\fi}
@@ -36,10 +30,7 @@ $endif$
 
 
 \begin{document}  
-
 \thispagestyle{plain} 
-
-
 $if(graphics)$$if(logo)$\Oldincludegraphics[width=$if(width)$$width$$else$0.3$endif$\textwidth, $if(logoposition)$$logoposition$$else$right$endif$]{$logo$}$else$$endif$$endif$
 
 
