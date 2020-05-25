@@ -41,6 +41,17 @@ sidebar <- sidebarPanel(uiOutput("sidebarpanel"))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+  
+  ######## ERROR MESSSAGE COLOR
+  tags$head(
+    tags$style(HTML("
+                    .shiny-output-error-validation {
+                    color: #ff0000;
+                    font-weight: bold;
+                    }
+                    "))
+  ),
+  
   theme = shinytheme("spacelab"),
   
   #titlePanel( div(column(width = 6, tags$img(src = "images/inmegen.jpg"))),
@@ -236,9 +247,42 @@ server <- function(input, output, session) {
     
     output <- output_dir()
     
+    ######## VALIDATE THAT  INPUT DIRECTORY WAS SELECTED
+    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
+    validate(
+      need(rtpcr != "", "NO INPUT DIRECTORY WAS SELECTED")
+    )
+    
+    ######## VALIDATE THAT  INPUT PATH DOES NOT CONTAIN BLANK SPACES
+    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
+    validate(
+      #need(sum(grepl(" ", rtpcr)) < 1,  "INPUT DIRECTORY HAS BLANK SPACES")
+    )
+    
+    
+    ######## VALIDATE THAT OUTPUT DIRECTORY WAS SELECTED
+    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
+    validate(
+      need(output != "", "NO OUTPUT DIRECTORY WAS SELECTED")
+    )
+    
+    ######## VALIDATE THAT  OUTPUT PATH DOES NOT CONTAIN BLANK SPACES
+    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
+    validate(
+      #need(sum(grepl(" ", output)) < 1,  "OUTPUT DIRECTORY HAS BLANK SPACES")
+    )
+    
+    
     withProgress(message = 'corriendo analisis', value = 0.3, {
       all_results <- qpcr_pipeline.cdc(input=rtpcr, output=paste(output, "/", sep=""))
+      #all_results <- "MIRA MIRA"
     })
+    
+    ######## VALIDATE THAT THE RESULTS ARE GENERATE PROPERLY
+    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
+    validate(
+      need(is.list(all_results), all_results)
+    )
     
     return(all_results)
     
