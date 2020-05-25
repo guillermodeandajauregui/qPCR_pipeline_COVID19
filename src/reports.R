@@ -127,6 +127,7 @@ plateBooklet <- function(results, outdir, qc_results){
                                                         ifelse(my_r[,"classification"] == "edge_positive", "\\cellcolor{red!25}{positivo marginal}", 
                                                           my_r[,"classification"])))))
     processingdate <- unique(getDate(my_r$sample))
+    plate <- unique(results$plate)
     outpath <- paste0(outdir, "/", Sys.Date(), "_", plate, "_", "plateBooklet.pdf") 
     render("plateBooklet.Rmd",output_file = outpath)
 }
