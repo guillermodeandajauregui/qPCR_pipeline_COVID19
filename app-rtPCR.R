@@ -253,12 +253,6 @@ server <- function(input, output, session) {
       need(rtpcr != "", "NO INPUT DIRECTORY WAS SELECTED")
     )
     
-    ######## VALIDATE THAT  INPUT PATH DOES NOT CONTAIN BLANK SPACES
-    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
-    validate(
-      #need(sum(grepl(" ", rtpcr)) < 1,  "INPUT DIRECTORY HAS BLANK SPACES")
-    )
-    
     
     ######## VALIDATE THAT OUTPUT DIRECTORY WAS SELECTED
     ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
@@ -266,17 +260,11 @@ server <- function(input, output, session) {
       need(output != "", "NO OUTPUT DIRECTORY WAS SELECTED")
     )
     
-    ######## VALIDATE THAT  OUTPUT PATH DOES NOT CONTAIN BLANK SPACES
-    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
-    validate(
-      #need(sum(grepl(" ", output)) < 1,  "OUTPUT DIRECTORY HAS BLANK SPACES")
-    )
-    
     
     withProgress(message = 'corriendo analisis', value = 0.3, {
       all_results <- qpcr_pipeline.cdc(input=rtpcr, output=paste(output, "/", sep=""))
-      #all_results <- "MIRA MIRA"
     })
+    
     
     ######## VALIDATE THAT THE RESULTS ARE GENERATE PROPERLY
     ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
