@@ -160,7 +160,7 @@ resultsReport <- function(results, outdir){
 ## Print the results report by clients
 
 makeReports <- function(table_diagnosis, # data with columns like simulated data
-                         outdir, # The report output directory will be defined either by the user or by the DDT
+                         outdir # The report output directory will be defined either by the user or by the DDT
                          ){
     results <- cbind(table_diagnosis, id_client = getClientID(table_diagnosis$sample))
     lapply(split(results,results$id_client), resultsReport, outdir = outdir)
