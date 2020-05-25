@@ -7,7 +7,7 @@ output:
 
 ---
 
-```{r echo=F, warning=F, results='asis'}
+```{r echo = FALSE, warning = FALSE, results = 'asis', message = FALSE}
 
 library(knitr)
 library(kableExtra)
@@ -37,7 +37,7 @@ kable(my_qc, row.names = FALSE,
 ```  
 \medskip
 
-```{r echo=F, warning=F, results='asis'}
+```{r echo = FALSE, warning = FALSE, results = 'asis' , message = FALSE}
 
 library(knitr)
 library(kableExtra)

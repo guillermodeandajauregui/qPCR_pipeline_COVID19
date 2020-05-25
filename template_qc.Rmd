@@ -30,7 +30,7 @@ width: 1
 logoposition: center
 logo: theme/Inmegenlogosalud.pdf
 ---
-```{r echo=F, warning=F, results='asis'}
+```{r echo=F, warning = FALSE, results = 'asis', message = FALSE}
 
 library(knitr)
 kable(my_r)

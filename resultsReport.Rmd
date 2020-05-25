@@ -27,7 +27,7 @@ logoposition: center
 logo: theme/inmegenlogosalud.pdf
 ---
 
-```{r echo=F, warning=F, results='asis'}
+```{r echo = FALSE , warning = FALSE, results ='asis', message = FALSE}
 
 library(knitr)
 library(kableExtra)
