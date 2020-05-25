@@ -1,0 +1,37 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+    fig_caption: yes
+    latex_engine: pdflatex
+    template: theme/resultsReport.tex
+geometry: margin=0.7in
+papersize: letterpaper
+date: "`r Sys.Date()`"
+receiber: "Dr. X"
+id: "`r unique(client)`"
+analista: "Alfredo Mendoza"
+brigada: "A1"
+nsamples: "`r as.character(n_samples)`"
+allsamples: "`r as.character(allsamples)`"
+sampling: 
+processingdate: "`r processingdate`"
+method: "`r unique(my_r$method)`"
+fontfamily: fontenc
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+graphics: true
+width: 1
+logoposition: center
+logo: theme/inmegenlogosalud.pdf
+---
+
+```{r echo = FALSE , warning = FALSE, results ='asis', message = FALSE}
+
+library(knitr)
+library(kableExtra)
+kable(my_r, row.names = FALSE, col.names = c("Número consecutivo","ID INMEGEN", "Resultado"), 
+			align = "ccc", format="latex", booktabs=TRUE, escape = FALSE) %>% 
+kable_styling(latex_options = c("repeat_header", "striped"), fixed_thead = TRUE)
+```

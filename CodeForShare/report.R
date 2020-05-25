@@ -53,8 +53,8 @@ metadata <- data.frame(plate = plate,
                       notes= notes)
 
 
-input <- "data/P-01-06Y-2CQP-1.res"
-qc_input <- "data/P-01-06Y-2CQP-1.qc"
+input <- "data/P-14-19Y-2CQP-1.res"
+qc_input <- "data/P-14-19Y-2CQP-1.qc"
 
 results <- read.table(input, header = TRUE, stringsAsFactors = FALSE)
 
@@ -73,11 +73,34 @@ result_table <- cbind(metadata[metadata$id_inmegen %in% results$sample,], result
 
 
 ## Extrae la fecha de procesamiento de placa a partir del ID INMEGEN de muestra
+
+getDecade <- function(idinmegen){
+  sapply(sapply(idinmegen, 
+            function(x){strsplit(x, split = "-")}), 
+    function(x){x[2]})
+}
+
+getMonth <- function(idinmegen){
+  tail <- sapply(sapply(idinmegen, 
+            function(x){strsplit(x, split = "-")}), 
+    function(x){x[4]})
+  monthID <- substr(tail, start = 3, stop = 3)
+  month <- sapply(idinmegen, function(x){which(c("E", "F", "Z", "A", "Y", "J", "L", "G", "S", "O", "N", "D") %in% monthID)})
+  return(month)
+}
+
+getDay <- function(idinmegen){
+  tail <- sapply(sapply(idinmegen, 
+            function(x){strsplit(x, split = "-")}), 
+    function(x){x[4]})
+  day <- substr(tail, start = 1, stop = 2)
+  return(day)
+}
+
 getDate <- function(idinmegen){
-  codeMonth <- c("E", "F", "Z", "A", "Y", "J", "L", "G", "S", "O", "N", "D")
-  myDate <- as.Date(paste(paste("20", substr(idinmegen, start = 4, stop = 5), sep = ""), 
-                        sapply(idinmegen, function(x){which(codeMonth %in% substr(x, start = 11, stop = 11))}), 
-                        substr(idinmegen, start = 9, stop = 10), sep ="-"))
+  myDate <- as.Date(paste(paste("20", getDecade(idinmegen), sep = ""), 
+                        getMonth(idinmegen), 
+                        getDay(idinmegen), sep ="-"))
   return(myDate)
 }
 

@@ -33,7 +33,7 @@ logoposition: center
 logo: theme/Inmegenlogosalud.pdf
 ---
 
-```{r, echo = F, results='hide',fig.keep='all', warning=F, fig.width=6, fig.height=6.5, fig.align='center'}
+```{r, echo = FALSE, results='hide',fig.keep = 'all', warning = FALSE, fig.width = 6, fig.height = 6.5, fig.align='center', message = FALSE}
 
 
 mea_plote

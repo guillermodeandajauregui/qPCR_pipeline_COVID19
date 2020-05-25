@@ -1,0 +1,62 @@
+---
+output: 
+  pdf_document:
+    keep_tex: false
+    latex_engine: pdflatex
+    template: theme/plateBooklet.tex
+
+---
+
+```{r echo = FALSE, warning = FALSE, results = 'asis', message = FALSE}
+
+library(knitr)
+library(kableExtra)
+kable(my_qc, row.names = FALSE, 
+			col.names = c("Tipo de Control","Nombre del Control Externo", "Usado para monitoriar", "nCoV-N1 2019", "nCoV-N2 2019", "RP"), 
+			align = "lclccc", 
+			format="latex", 
+			booktabs=TRUE, 
+			escape = FALSE) %>% 
+	column_spec(1,  border_left = TRUE, width = "1.5cm") %>%
+	column_spec(2, width = "1.5cm") %>%
+	column_spec(3, width = "5cm") %>%
+	column_spec(4, border_left = TRUE, width = "1.5cm") %>%
+	column_spec(5, width = "1.5cm") %>%
+	column_spec(6, border_right = TRUE, width = "1.5cm") %>%
+	kable_styling(latex_options = c("striped", "HOLD_position"), 
+					fixed_thead = TRUE,
+					font_size = 8,
+					full_width = FALSE,
+					position = "left") %>%
+	add_header_above(header = setNames(6, paste("PLACA ID:", plate)), 
+					bold = T, 
+					align = "l", 
+					color = "white", 
+					background = "black")
+
+```  
+\medskip
+
+```{r echo = FALSE, warning = FALSE, results = 'asis' , message = FALSE}
+
+library(knitr)
+library(kableExtra)
+kable(my_r, row.names = FALSE, 
+			col.names = c(" ","ID de la Placa", "ID INMEGEN", "N1 (CoV2)", "N2 (Cov2)", "RP", "Resultado"), 
+			align = "ccccccc", 
+			format="latex", 
+			booktabs=TRUE, 
+			escape = FALSE) %>% 
+	add_header_above(c(" ", "Indicadores" = 2, "Genes blanco" = 3), bold = T) %>%
+	kable_styling(latex_options = c("repeat_header", "striped"), 
+		fixed_thead = TRUE,
+		font_size = 8,) %>%
+	column_spec(4, border_left = TRUE) %>%
+	column_spec(7, border_left = TRUE, border_right = TRUE, bold = TRUE)
+
+```
+
+```{r pagebreak, echo = F, results='hide', results='asis', eval=!("EC" %in% qc_results$qc.values$sample)}
+cat("\\vspace*{\\fill}")
+cat("\\scriptsize En esta placa no se añadió control de extracción (EC). Revisar la placa 4 consecutiva. \\par  ")
+```

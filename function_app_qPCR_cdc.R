@@ -11,8 +11,10 @@
 #libraries
 ################################################################################
 source("src/functions.R")
+source("src/functions_sanitizing.R")
 source("src/functions_adjustment.R")
 source("src/plots.R")
+source("src/reports.R")
 ################################################################################
 #read data
 ################################################################################
@@ -25,7 +27,24 @@ source("src/plots.R")
 
 qpcr_pipeline.cdc <- function(input, output){
   
+#####################
+#Sanity checks 
+#####################
+  
+### check eds has results
+  
+has_results <- CheckResultsEDS(eds = input)
+if(has_results == FALSE){
+  return("no_results")
+}
+  
+### check sample names in eds have no special characters (only AZaz09 and -)
 
+has_CleanNames <- CheckNamesEDS(eds = input)
+if(has_CleanNames == FALSE){
+  return("special_characters_in_names")
+}
+  
 my_deltaRN <- tidy_deltaRN(input) #read deltaRN from EDS file 
 
 ########
@@ -34,6 +53,14 @@ my_deltaRN <- tidy_deltaRN(input) #read deltaRN from EDS file
 
 cdc_probes <- c("RP", "N1", "N2")
 names(cdc_probes) <- cdc_probes
+
+### check that all samples have all probes
+
+has_allProbes <- CheckProbesEDS(eds = input, my_probes = cdc_probes)
+if(has_allProbes == FALSE){
+  return("some_samples_are_missing_probes")
+}
+
 ################################################################################
 #Separate sample wells from QC wells 
 ################################################################################
@@ -123,6 +150,13 @@ data.frame(plate    = plate,
            test_diagnosis 
 ) %>% as.tbl() %>% select(sample, everything())
 
+################################################################################
+#Write plate Booklet
+################################################################################
+
+plateBooklet(results = test_diagnosis,
+             qc_results = qc_results,
+             outdir = output)
 
 ################################################################################
 #Write QC output
