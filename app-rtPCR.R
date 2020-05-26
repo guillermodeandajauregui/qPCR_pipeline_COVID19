@@ -20,6 +20,7 @@ library(sodium)
 source("function_app_qPCR_cdc.R")
 source("function_plate_conf.R")
 source("src/functions.R")
+source("src/reports.R")
 
 #input <- c("data/Procolo_COVID-19_Prueba1_4Abr20.eds")
 #output <- c("results/")
@@ -293,6 +294,7 @@ server <- function(input, output, session) {
     withProgress(message = 'corriendo analisis', value = 0.3, {
       all_results_list <- lapply(files, qpcr_pipeline.cdc, output=paste(output, "/", sep=""))
       names(all_results_list) <- plates
+      
     })
     
     return(all_results_list)
@@ -310,6 +312,10 @@ server <- function(input, output, session) {
     
     test_results <- lapply(all_results_list, function(x){x$test_results})
     test_results_merge <- bind_rows(test_results)
+    
+    withProgress(message = 'imprimiendo reportes', value = 0.3, {
+      makeReports(test_results_merge, paste(output_dir(), "/", sep=""))
+    })
     
     return(test_results_merge)
   })
