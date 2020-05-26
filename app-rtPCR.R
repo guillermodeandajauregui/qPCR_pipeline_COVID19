@@ -310,7 +310,11 @@ server <- function(input, output, session) {
     #Merge results
     ################################################################################
     
-    test_results <- lapply(all_results_list, function(x){x$test_results})
+    test_results <- lapply(all_results_list, function(x){
+      df <- x$test_results
+      df$ec.pass[df$ec.pass == "not_run"] <- NA
+      return(df)
+    })
     test_results_merge <- bind_rows(test_results)
     
     withProgress(message = 'imprimiendo reportes', value = 0.3, {
