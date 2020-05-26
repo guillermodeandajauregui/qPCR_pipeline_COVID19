@@ -297,7 +297,10 @@ server <- function(input, output, session) {
       
     })
     
-    return(all_results_list)
+    all_results_status <- sapply(all_results_list, is.list)
+    all_results_valid <- all_results_list[all_results_status]
+    
+    return(all_results_valid)
     
   })
   
@@ -344,7 +347,7 @@ server <- function(input, output, session) {
     table_out_list()
     
     all_results_list <- table_out_list()
-    
+    test_results_merge <- results_samples()
     ################################################################################
     #Merge QC
     ################################################################################
@@ -488,7 +491,7 @@ server <- function(input, output, session) {
     
     input_dir <- input_dir()
     
-    if (is.null( rtpcr))
+    if (is.null( input_dir))
       return("NO EXISTE EL DIRECOTRIO DE ENTRADA")
     
     eds_file <- paste(paste(input_dir, input$conf, sep="/"), "eds", sep=".")
