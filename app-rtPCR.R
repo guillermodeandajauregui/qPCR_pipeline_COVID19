@@ -114,7 +114,7 @@ ui <- fluidPage(
                  dataTableOutput(outputId = 'run_ready')
                )
       ),
-      tabPanel(title = "Curvas control",
+      tabPanel(title = "Curvas QC",
                value = "curves", 
                
                ########## TABLA DE QC
@@ -145,8 +145,25 @@ ui <- fluidPage(
                plotOutput("plot3")
                #dataTableOutput(outputId = 'summary_table_gene')
       ),
+      tabPanel(title = "Curvas muestra",
+               value = "samples", 
+               
+               h3("Selecciona una muestra para visualizar sus curvas de amplificacion"),
+               selectInput(inputId = "sample", label = "", choices = NULL),
+               br(),
+               br(),
+               
+               h3(textOutput("caption_sample")),
+               plotOutput("plot_sample")
+      ),
       tabPanel(title = "Reporte de la placa",
-               value = "plate", 
+               value = "plate",
+               
+               h3("Selecciona una placa para visualizar su configuracion"),
+               selectInput(inputId = "conf", label = "", choices = NULL),
+               br(),
+               br(),
+               
                dataTableOutput(outputId = 'plate_conf')
                #dataTableOutput(outputId = 'prueba'),
                #plotlyOutput('coveragePlot', height = "400px")
@@ -194,16 +211,6 @@ server <- function(input, output, session) {
       ######## BUTTON TO GENERATE SUMMARY TABLE
       h5('Presiona para analizar los datos de la corrida'),
       actionButton("analizar", "Analizar corrida"),
-      hr(),
-      
-      ######## BUTTON TO PRINT PLOTS TO WEB
-      #h5('Presiona para imprimir las curvas control en la interfaz web'),
-      #actionButton("plot", "Imprimir curvas control en Web"),
-      #hr(),
-      
-      ######## BUTTON TO GENERATE PLATE CONFIGURATION TABLE
-      h5('Presiona para generar el reporte de la placa'),
-      actionButton("plate", "Reporte placa"),
       width = 12
     ))
     }
@@ -292,8 +299,8 @@ server <- function(input, output, session) {
     
   })
   
-  ####### DESPLEGAR TABLA DE RESULTADOS
-  output$run_ready <- renderDataTable({
+  ####### GENERAR TABLA DE RESULTADOS
+  results_samples <- reactive({
     table_out_list()
     
     all_results_list <- table_out_list()
@@ -304,8 +311,14 @@ server <- function(input, output, session) {
     test_results <- lapply(all_results_list, function(x){x$test_results})
     test_results_merge <- bind_rows(test_results)
     
+    return(test_results_merge)
+  })
+  
+  ####### DESPLEGAR TABLA DE RESULTADOS
+  output$run_ready <- renderDataTable({
+    results_samples()
     
-    datatable(test_results_merge) %>% 
+    datatable(results_samples()) %>% 
         formatStyle( 'classification', 
                      target = 'row',
                      backgroundColor = styleEqual(c("positive", "negative"),
@@ -431,16 +444,46 @@ server <- function(input, output, session) {
   })
   
   
+  ################################################################################
+  #Get sample names for drop-down menu
+  ################################################################################
+  observe({
+    updateSelectInput(session = session, inputId = "sample", choices = results_samples()$sample)
+  })
+  
+  output$caption_sample <- renderText({
+    results_samples()
+    merge <- results_samples()
+    sample <- input$sample
+    sample
+  })
+  
+  output$plot_sample <- renderPlot({
+    results_samples()
+    merge <- results_samples()
+    sample <- input$sample
+    plate <- merge$plate[merge$sample == sample]
+    plots <- table_out_list()[[plate]]$triplets.samples[[sample]]
+    (plots)
+  })
+  
+  
+  observe({
+    updateSelectInput(session = session, inputId = "conf", choices = names(table_out_list()))
+  })
   
   ####### OBTENER LA CONFIGURACION DE LA PLACA AL DARLE CLICK AL BOTON REPORTE PLACA
-  plate_out <- eventReactive(input$plate, {
+  plate_out <- reactive({
+    table_out_list()
     
-    rtpcr <- input_file()
+    input_dir <- input_dir()
     
     if (is.null( rtpcr))
-      return("NO EXISTE ARCHIVO DE ENTRADA")
+      return("NO EXISTE EL DIRECOTRIO DE ENTRADA")
     
-    plate_conf <- get_plate_conf(rtpcr)
+    eds_file <- paste(paste(input_dir, input$conf, sep="/"), "eds", sep=".")
+    
+    plate_conf <- get_plate_conf(eds_file)
     return(plate_conf)
   })
    
