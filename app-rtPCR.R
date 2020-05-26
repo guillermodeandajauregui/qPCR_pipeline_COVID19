@@ -93,8 +93,8 @@ ui <- fluidPage(
                
                ###### ARCHIVO A PROCESAR    
                fluidRow(
-                 h4("Archivo a procesar seleccionado"),
-                 textOutput("input_file")
+                 h4("Directorio a procesar seleccionado"),
+                 textOutput("input_dir")
                ),
                hr(),
                hr(),
@@ -116,6 +116,21 @@ ui <- fluidPage(
       ),
       tabPanel(title = "Curvas control",
                value = "curves", 
+               
+               ########## TABLA DE QC
+               fluidRow( 
+                 h4("Tabla de QC"),
+                 br(),
+                 br(),
+                 #textOutput("run_ready")
+                 dataTableOutput(outputId = 'qc_table')
+                ),
+               
+               h3("Selecciona una placa para visualizar sus curvas de calidad"),
+               selectInput(inputId = "plate_qc", label = "Placa", choices = NULL),
+               br(),
+               br(),
+               
                h3(textOutput("caption1")),
                plotOutput("plot1"),
                br(),
@@ -165,8 +180,8 @@ server <- function(input, output, session) {
       
       ######## h2("Selecciona el archivo a procesar"),
       #fileInput("rtpcr", "Sube el archivo a procesar"),
-      h5('Selecciona el archivo a procesar'),
-      shinyFilesButton('file', 'Archivo a procesar', 'Selecciona el archivo a procesar', FALSE),
+      h5('Selecciona el directorio a procesar'),
+      shinyDirButton('input_dir', 'Directorio a procesar', 'Selecciona el directorio a procesar'),
       hr(),
       
       ######## h2("Selecciona el directorio para los resultados"),
@@ -211,17 +226,17 @@ server <- function(input, output, session) {
   ###### LEER ESTRUCTURA DE DIRECTORIOS LOCAL
   volumes <- getVolumes()
   
-  ###### DESPLIEGUE PARA LA ELECCION DEL ARCHIVO A PROCESAR
-  shinyFileChoose(input,'file', roots=volumes, session=session)
+  ###### DESPLIEGUE PARA LA ELECCION DEL DIRECTORIO A PROCESAR
+
+  shinyDirChoose(input, 'input_dir', roots=volumes, session=session)
   
-  input_file <- reactive({
-    inFile <- parseFilePaths(volumes, input$file)
-    inFile.path <- as.character(inFile$datapath)
+  input_dir <- reactive({
+    return(print(parseDirPath(volumes, input$input_dir)))
   })
   
-  ####### IMPRIMIR LA RUTA DEL ARCHIVO A PROCESAR
-  output$input_file <- renderText({
-    input_file()
+  ####### IMPRIMIR EL DIRECTORIO DE SALIDA
+  output$input_dir <- renderText({
+    input_dir()
   })
   
   ###### DESPLIEGUE PARA LA ELECCION DEL DIRECTORIO DE SALIDA
@@ -238,9 +253,9 @@ server <- function(input, output, session) {
   })
   
   ####### CORRER EL PROCESO DE CLASIFICACION AL DARLE CLICK AL BOTON ANALIZAR
-  table_out <- eventReactive(input$analizar, {
+  table_out_list <- eventReactive(input$analizar, {
     
-    rtpcr <- input_file()
+    rtpcr <- input_dir()
     
     if (is.null( rtpcr))
       return("NO EXISTE ARCHIVO DE ENTRADA")
@@ -260,78 +275,156 @@ server <- function(input, output, session) {
       need(output != "", "NO OUTPUT DIRECTORY WAS SELECTED")
     )
     
+    ######## GET PATH FOR ALL EDS FILES IN DIRECTORY 
+    eds.files <- list.files(rtpcr, pattern = ".eds")
+    files <- paste(rtpcr, eds.files, sep="/")
+
+    ######## GET PLATES NAMES DERIVED FROM EDS FILES IN DIRECTORY 
+    plates <- sub(".eds", "", eds.files)
     
+    ######## OBTAIN RESULT FOR ALL EDS FILES IN DIRECTORY    
     withProgress(message = 'corriendo analisis', value = 0.3, {
-      all_results <- qpcr_pipeline.cdc(input=rtpcr, output=paste(output, "/", sep=""))
+      all_results_list <- lapply(files, qpcr_pipeline.cdc, output=paste(output, "/", sep=""))
+      names(all_results_list) <- plates
     })
     
-    
-    ######## VALIDATE THAT THE RESULTS ARE GENERATE PROPERLY
-    ######## OTHERWISE PRINT TEXT DESCRIBIING THE ERROR
-    validate(
-      need(is.list(all_results), all_results)
-    )
-    
-    return(all_results)
+    return(all_results_list)
     
   })
   
   ####### DESPLEGAR TABLA DE RESULTADOS
   output$run_ready <- renderDataTable({
-    table_out()
+    table_out_list()
     
-    qc <- table_out()$qc_results
+    all_results_list <- table_out_list()
+    ################################################################################
+    #Merge results
+    ################################################################################
     
-    if (qc$QC != "PASS"){
-      datatable(table_out()$test_results) %>% 
-        formatStyle('N1', 
-                    target='row',
-                    backgroundColor = "yellow" )
-    }else{
-      datatable(table_out()$test_results) %>% 
+    test_results <- lapply(all_results_list, function(x){x$test_results})
+    test_results_merge <- bind_rows(test_results)
+    
+    
+    datatable(test_results_merge) %>% 
         formatStyle( 'classification', 
                      target = 'row',
                      backgroundColor = styleEqual(c("positive", "negative"),
-                                                  c('aquamarine', 'pink')) )
-    }
+                                                  c('aquamarine', 'pink')) ) %>% 
+        formatStyle( 'qc', 
+                   target = 'cell',
+                   backgroundColor = styleEqual(c("FAIL"),
+                                                c('yellow')) )
   })
+  
+  ####### DESPLEGAR TABLA DE RESULTADOS
+  output$qc_table <- renderDataTable({
+    table_out_list()
+    
+    all_results_list <- table_out_list()
+    
+    ################################################################################
+    #Merge QC
+    ################################################################################
+    
+    qc_results <- lapply(all_results_list, function(x){x$qc_results$qc.values})
+    qc_results_merge <- bind_rows(qc_results)
+    
+    ################################################################################
+    #Add plate name 
+    ################################################################################
+    
+    info.qc <- test_results_merge %>% 
+      select(c(plate, ntc.pass, ptc.pass, ec.pass)) %>% 
+      unique() %>% 
+      mutate(rep = rowSums(.[2:4], na.rm = TRUE))
+    
+    qc_results_merge$plate <- rep(info.qc$plate, info.qc$rep)
+    
+    
+    ################################################################################
+    #Add QC classification
+    ################################################################################
+    
+    pass.qc <- info.qc %>%
+      select(c(ntc.pass, ptc.pass, ec.pass))  %>%
+      as.data.frame()  %>%
+      t() %>% 
+      unlist() %>% 
+      as.vector() %>% 
+      na.omit() %>% 
+      as.vector()
+    
+    qc_results_merge$QC <- pass.qc
+    
+    datatable(qc_results_merge) %>% 
+      formatStyle( 'QC', 
+                   target = 'row',
+                   backgroundColor = styleEqual(c("TRUE", "FAIL"),
+                                                c('white', 'yellow')) ) 
+ })
+    
+  ################################################################################
+  #Get plate names for drop-down menu
+  ################################################################################
+  observe({
+    updateSelectInput(session = session, inputId = "plate_qc", choices = names(table_out_list()))
+  })
+  
   
   ####### IMPRIMIR CURVAS AL DARLE CLICK AL BOTON 
   
+  ################################################################################
+  # TABLE AND PLLOT PTC
+  ################################################################################
+  
   output$caption1 <- renderText({
-    table_out()
-    names(table_out()$triplets.qc)[1]
+    table_out_list()
+    plate <- input$plate_qc
+    names(table_out_list()[[plate]]$triplets.qc)[1]
   })
   
   output$plot1 <- renderPlot({
-    table_out()
-    plots <- table_out()$triplets.qc
+    table_out_list()
+    plate <- input$plate_qc
+    plots <- table_out_list()[[plate]]$triplets.qc
     (plots[[1]] + ggtitle(labels(plots)[1]))
   })
   
+  ################################################################################
+  # TABLE AND PLLOT NTC
+  ################################################################################
+  
   output$caption2 <- renderText({
-    table_out()
-    names(table_out()$triplets.qc)[2]
+    table_out_list()
+    plate <- input$plate_qc
+    names(table_out_list()[[plate]]$triplets.qc)[2]
   })
   
   output$plot2 <- renderPlot({
-    table_out()
-    plots <- table_out()$triplets.qc
+    table_out_list()
+    plate <- input$plate_qc
+    plots <- table_out_list()[[plate]]$triplets.qc
     (plots[[2]] + ggtitle(labels(plots)[2]))
   })
   
+  ################################################################################
+  # TABLE AND PLLOT EC
+  ################################################################################
+  
   output$caption3 <- renderText({
-    table_out()
+    table_out_list()
+    plate <- input$plate_qc
     text <- "ESTA PLACA NO CONTIENE EL CONTROL EC. REVISAR LA PLACA 4 CONSECUTIVA."
-    if (length(names(table_out()$triplets.qc)) == 3){
-      text <- names(table_out()$triplets.qc)[3]
+    if (length(names(table_out_list()[[plate]]$triplets.qc)) == 3){
+      text <- names(table_out_list()[[plate]]$triplets.qc)[3]
     }
     text
   })
   
   output$plot3 <- renderPlot({
-    table_out()
-    plots <- table_out()$triplets.qc
+    table_out_list()
+    plate <- input$plate_qc
+    plots <- table_out_list()[[plate]]$triplets.qc
     if (length(plots) == 3){
       (plots[[3]] + ggtitle(labels(plots)[3]))
     }
