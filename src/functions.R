@@ -337,8 +337,6 @@ plate_qc <- function(tdrn, all_probes){
       
     })%>% bind_rows(.id = "sample")  
   
-  
-  
   #evaluate logic
   
   #check that all probes for NTC DO NOT cross threshold
@@ -361,7 +359,7 @@ plate_qc <- function(tdrn, all_probes){
         filter(grepl(pattern = "EC", x = sample)) %>%
         #select(!sample) %>%
         select(-sample) %>%
-        map_dfr(.f = function(i){all(i==99)}) %>% #all probes dont cross threshold
+        map_dfr(.f = function(i){all(i==99)}) %>% #all probes dont amplify
         unlist %>% all(. == T) #this should be all true
     }
   
@@ -374,7 +372,8 @@ plate_qc <- function(tdrn, all_probes){
   
 
   ptc.all <-
-    list(RP = all(ptc.all[["RP"]]>=35), #this should be T, do not amplify
+    list(RP = all(ptc.all[["RP"]]==99), #this should be T, do not amplify
+    #list(RP = all(ptc.all[["RP"]]>=35), #this should be T, do not amplify
          N1 = all(ptc.all[["N1"]]<=38), #this should be T, amplify
          N2 = all(ptc.all[["N2"]]<=38)  #this should be T, amplify
          ) %>% 
@@ -388,6 +387,17 @@ plate_qc <- function(tdrn, all_probes){
   }
   
   
+  ### add a warnings column to the QC results 
+  
+  qc.results <-
+  qc.results %>% 
+  mutate(warnings = case_when(sample == "PTC" & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "Late or under-threshold amplification found. Validate visually",
+                              sample == "EC"  & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "Late or under-threshold amplification found. Validate visually",
+                              sample == "PTC" & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "Late or under-threshold amplification found. Validate visually",
+                              TRUE ~ "ok")
+  )
+  
+  
   result_final <- list(qc.values = qc.results,
                        ntc.pass = ntc.all,
                        ptc.pass = ptc.all,
@@ -397,6 +407,10 @@ plate_qc <- function(tdrn, all_probes){
   if(!ntc.all){print("NTC failed")}
   if(!ptc.all){print("PTC failed")}
   if(is.logical(ec.all) && !ec.all){print("EX failed")}
+  
+  if(any(qc.results$warnings == "Late or under-threshold amplification found. Validate visually")){
+    print("Late amplification was found in at least one of your QC samples. Validate visually")
+  }
   
   return(result_final)
 
