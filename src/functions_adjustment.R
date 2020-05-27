@@ -189,7 +189,7 @@ analyze_sample_x <- function(tdrn_sample, probes, threshold_list){
       
       #check where curve crosses
       if(is.character(my_adjustment)){
-        Ct <- Inf
+        Ct <- 99
       }else{
         Ct <-
           my_adjustment %>% 
