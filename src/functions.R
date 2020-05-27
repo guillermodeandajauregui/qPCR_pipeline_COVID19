@@ -486,7 +486,7 @@ cdc_classification <- function(SampleResults){
                                       N1 < 99 & N2 == 99 ~ "inconclusive",
                                       N1 == 99 & N2 == 99 & RP <= 35~ "negative",
                                       N1 == 99 & N2 == 99 & RP < 99  ~ "edge_negative",
-                                      N1 == 99 & N2 == 99 & RP == 99 ~ "invalid"
+                                      N1 == 99 & N2 == 99 & RP >= 99 ~ "invalid"
                                       )
            )
     # mutate(classification = ifelse(test = RP > 35, 
