@@ -391,9 +391,10 @@ plate_qc <- function(tdrn, all_probes){
   
   qc.results <-
   qc.results %>% 
-  mutate(warnings = case_when(sample == "PTC" & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "Late or under-threshold amplification found. Validate visually",
-                              sample == "EC"  & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "Late or under-threshold amplification found. Validate visually",
-                              sample == "PTC" & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "Late or under-threshold amplification found. Validate visually",
+  mutate(warnings = case_when(sample == "PTC" & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "under-threshold amplification found. Validate visually",
+                              sample == "EC"  & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "under-threshold amplification found. Validate visually",
+                              sample == "PTC" & (RP ==Inf | N1 == Inf| N2 == Inf)  ~ "under-threshold amplification found. Validate visually",
+                              sample == "PTC" & ((N1 > 38 & N1 != 99 ) | (N2 > 38 & N2 != 99))  ~ "late amplification found. Validate visually",
                               TRUE ~ "ok")
   )
   
@@ -408,7 +409,11 @@ plate_qc <- function(tdrn, all_probes){
   if(!ptc.all){print("PTC failed")}
   if(is.logical(ec.all) && !ec.all){print("EX failed")}
   
-  if(any(qc.results$warnings == "Late or under-threshold amplification found. Validate visually")){
+  if(any(qc.results$warnings == "under-threshold amplification found. Validate visually")){
+    print("Under-threshold amplification was found in at least one of your QC samples. Validate visually")
+  }
+  
+  if(any(qc.results$warnings == "late amplification found. Validate visually")){
     print("Late amplification was found in at least one of your QC samples. Validate visually")
   }
   
