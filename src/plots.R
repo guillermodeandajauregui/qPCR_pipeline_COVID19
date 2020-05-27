@@ -124,3 +124,40 @@ triplets <- function(curve.list){
 	return(triplets)
 }
 
+##### sample_curve.cdc
+sample_curve.cdc <- function(tdrn, sample_id){
+  #makes a curve plot with the three cdc probes for a single sample
+  #and the corresponding threshold 
+  
+  #pivot and split 
+  tdrn <- 
+    tdrn %>% 
+    pivot_deltaRN() %>% 
+    split_longtdrn()
+  
+  #get thresholds 
+  th_rp = try(get_probeThreshold(tdrn_long = tdrn, my_probe = "RP"))
+  th_n1 = try(get_probeThreshold(tdrn_long = tdrn, my_probe = "N1"))
+  th_n2 = try(get_probeThreshold(tdrn_long = tdrn, my_probe = "N2"))
+  
+  #make plot
+  
+  p <- 
+    suppressWarnings(
+      tdrn %>% 
+        filter(sample.label == sample_id) %>% 
+        mutate(probe = as_factor(probe)) %>% 
+        mutate(probe = fct_relevel(.f = probe, levels = c("RP", "N1", "N2"))) %>% 
+        ggplot(aes(cycles, value, colour = probe)) + 
+        geom_line() + 
+        theme_minimal() +
+        scale_color_manual(values = c("red", "green", "blue")) + 
+        geom_hline(yintercept = th_rp, colour = "red", linetype = 2, alpha = 0.5) +
+        geom_hline(yintercept = th_n1, colour = "green", linetype = 2, alpha = 0.5) +
+        geom_hline(yintercept = th_n2, colour = "blue", linetype = 2, alpha = 0.5) +
+        ggtitle(label = sample_id)
+    )
+  plot(p)
+  
+  
+}
