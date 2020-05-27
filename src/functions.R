@@ -348,8 +348,22 @@ plate_qc <- function(tdrn, all_probes){
     filter(grepl(pattern = "NTC", x = sample)) %>%
     #select(!sample) %>%
     select(-sample) %>%
-    map_dfr(.f = function(i){all(i==Inf)}) %>% #all probes dont cross threshold
+    map_dfr(.f = function(i){all(i==99)}) %>% #all probes dont cross threshold
     unlist %>% all(. == T) #this should be all true
+  
+  
+  #check that all probes for EC DO NOT cross threshold; same as NTC
+  
+  if(length(wells.exc)==0){
+    ec.all <- "not_run"}else{
+      ec.all <-
+        qc.results %>%
+        filter(grepl(pattern = "EC", x = sample)) %>%
+        #select(!sample) %>%
+        select(-sample) %>%
+        map_dfr(.f = function(i){all(i==99)}) %>% #all probes dont cross threshold
+        unlist %>% all(. == T) #this should be all true
+    }
   
   #check that all probes for PTC DO cross threshold
   ptc.all <-
@@ -358,19 +372,7 @@ plate_qc <- function(tdrn, all_probes){
     #select(!sample)
     select(-sample)
   
-  #check that all probes for EC DO NOT cross threshold; same as NTC
-  
-  if(length(wells.exc)==0){
-    ec.all <- "not_run"}else{
-  ec.all <-
-    qc.results %>%
-    filter(grepl(pattern = "EC", x = sample)) %>%
-    #select(!sample) %>%
-    select(-sample) %>%
-    map_dfr(.f = function(i){all(i==Inf)}) %>% #all probes dont cross threshold
-    unlist %>% all(. == T) #this should be all true
-    }
-  
+
   ptc.all <-
     list(RP = all(ptc.all[["RP"]]>=35), #this should be T, do not amplify
          N1 = all(ptc.all[["N1"]]<=38), #this should be T, amplify
